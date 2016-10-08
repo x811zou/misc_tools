@@ -22,12 +22,26 @@ for i in range(1,10):
   print (i,end="")
 print("\n")
 
-i1=Interval(1,6)
-i2=Interval(4,9)
-u=i1.union(i2)
-print(u)
-print(i1)
+i1=Interval(1,10)
+i2=Interval(1.5,7.3)
+sub=i1.minus(i2)
+print(sub)
 
+a=["a","b","c"]
+for x in a:
+   print(x)
 
+def main():
+   try:
+      raise Exception("cookie")
+   except Exception as e:
+      print(e)
+
+main()
+
+my_generator = (letter for letter in 'abcdefg')
+
+x=0
+while(x<10):  print(x); x+=3
 
 

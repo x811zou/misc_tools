@@ -33,7 +33,9 @@ import sys
 #=========================================================================
 
 class Interval:
-
+   """"Interval represents an interval (a,b] in which a is inclusive and
+       b is not
+   """
    def __init__(self,begin=0,end=0):
       self.begin=begin
       self.end=end
@@ -95,7 +97,8 @@ class Interval:
       if(self.begin<other.begin):
          s.append(Interval(self.begin,other.begin))
       if(self.end>other.end):
-         s.append(Interval(other.end,self.end)
+         s.append(Interval(other.end,self.end))
+      return s
 
    def __str__(self):
       return "("+str(self.begin)+","+str(self.end)+")"
