@@ -8,6 +8,7 @@ from __future__ import (absolute_import, division, print_function,
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 import re
+import os
 
 #=========================================================================
 # Attributes:
@@ -22,9 +23,8 @@ import re
 #=========================================================================
 class FastaWriter:
     """FastaWriter"""
-    def __init__(self,width):
-        if(width): self.width=width
-        else: self.width=60
+    def __init__(self,width=60):
+        self.width=width
 
     def writeFasta(self,defline,seq,filename):
         with open(filename,"w") as fh:
@@ -35,13 +35,13 @@ class FastaWriter:
         if(not re.search("^\s*>",defline)): defline=">"+defline
         fh.write(defline+"\n");
         length=len(seq)
-        numLines=length//width
-        if(length%width>0): numLines+=1
+        numLines=length//self.width
+        if(length%self.width>0): numLines+=1
         start=0
         for i in range(0,numLines):
-            line=seq[start:start+width]
-	fh.write(line+"\n")
-	start+=width
+            line=seq[start:start+self.width]
+            fh.write(line+"\n")
+            start+=self.width
         if(length==0): fh.write("\n")
 
     def appendToFasta(self,defline,seq,filename):
