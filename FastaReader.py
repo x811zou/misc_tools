@@ -26,6 +26,7 @@ import re
 #   FastaReader.readAll(filename) # returns hash : id->sequence
 #   FastaReader.readAllAndKeepDefs(filename) # returns hash : id->[def,seq]
 #   seq=FastaReader.firstSequence(filename)
+#   [id,attribute_hash]=FastaReader.parseDefline(defline)
 #=========================================================================
 class FastaReader:
     """FastaReader"""
@@ -120,4 +121,20 @@ class FastaReader:
             hash[id]=[defline,seq]
         reader.close()
         return hash
-        
+    
+    @classmethod
+    def parseDefline(cls,defline):
+        match=re.search("^\s*>\s*(\S+)(.*)",defline)
+        if(not match): raise Exception("can't parse defline: "+defline)
+        id=match.group(1)
+        rest=match.group(2)
+        attributes={}
+        if(re.search("\S+",rest)):
+            fields=rest.split()
+            for field in fields:
+                match=re.search("/(\S+)=(\S+)",field);
+                if(match):
+                    key=match.group(1)
+                    value=match.group(2)
+                    attributes[key]=value
+        return [id,attributes]

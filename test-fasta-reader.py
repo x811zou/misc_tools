@@ -31,3 +31,7 @@ hash=FastaReader.readAllAndKeepDefs(filename)
 for key in hash.keys():
     [defline,seq]=hash[key]
     print(defline)
+    [id,attrs]=FastaReader.parseDefline(defline)
+    print("id="+id)
+    for key,value in attrs.items():
+        print(key+"="+value)
