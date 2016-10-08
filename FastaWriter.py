@@ -1,0 +1,54 @@
+#=========================================================================
+# This is OPEN SOURCE SOFTWARE governed by the Gnu General Public
+# License (GPL) version 3, as described at www.opensource.org.
+# Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
+#=========================================================================
+from __future__ import (absolute_import, division, print_function,
+   unicode_literals, generators, nested_scopes, with_statement)
+from builtins import (bytes, dict, int, list, object, range, str, ascii,
+   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+import re
+
+#=========================================================================
+# Attributes:
+#   width
+# Methods:
+#   FastaWriter()
+# Instance Methods:
+#   writer=FastaWriter(optionalWidth)
+#   writer.writeFasta(defline,sequence,filename)
+#   writer.appendToFasta(defline,sequence,filename)
+#   writer.addToFasta(defline,sequence,filehandle)
+#=========================================================================
+class FastaWriter:
+    """FastaWriter"""
+    def __init__(self,width):
+        if(width): self.width=width
+        else: self.width=60
+
+    def writeFasta(self,defline,seq,filename):
+        with open(filename,"w") as fh:
+            self.addToFasta(defline,seq,fh)
+        
+    def addToFasta(self,defline,seq,fh):
+        defline=defline.rstrip()
+        if(not re.search("^\s*>",defline)): defline=">"+defline
+        fh.write(defline+"\n");
+        length=len(seq)
+        numLines=length//width
+        if(length%width>0): numLines+=1
+        start=0
+        for i in range(0,numLines):
+            line=seq[start:start+width]
+	fh.write(line+"\n")
+	start+=width
+        if(length==0): fh.write("\n")
+
+    def appendToFasta(self,defline,seq,filename):
+        if(not os.path.exists(filename)):
+            self.writeFasta(defline,seq,filename)
+            return
+        with open(filename,"a") as fh:
+            self.addToFasta(defline,seq,fh)
+
+
