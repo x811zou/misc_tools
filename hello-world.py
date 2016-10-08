@@ -5,6 +5,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii, chr,
    hex, input, next, oct, open, pow, round, super, filter, map, zip)
 import ProgramName
 import sys
+from Interval import Interval
 
 # Process command line
 name=ProgramName.get();
@@ -20,5 +21,13 @@ print ("Hello, world\n")
 for i in range(1,10):
   print (i,end="")
 print("\n")
+
+i1=Interval(1,6)
+i2=Interval(4,9)
+u=i1.union(i2)
+print(u)
+print(i1)
+
+
 
 
