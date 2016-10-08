@@ -20,5 +20,14 @@ filename="/home/bmajoros/1000G/assembly/combined/HG00096/1.fasta"
 #    L=len(seq)
 #    print("length="+str(L))
 
-print(FastaReader.getSize("/home/bmajoros/1000G/assembly/BRCA1-NA19782.fasta"))
+filename="/home/bmajoros/1000G/assembly/BRCA1-NA19782.fasta";
+print(FastaReader.getSize(filename))
 
+[defline,seq]=FastaReader.firstSequence(filename)
+print(len(seq))
+
+filename="/home/bmajoros/1000G/assembly/test.fasta"
+hash=FastaReader.readAllAndKeepDefs(filename)
+for key in hash.keys():
+    [defline,seq]=hash[key]
+    print(defline)

@@ -41,7 +41,7 @@ class FastaReader:
         reader.fh=fh
 
     def close(self):
-        close(self.fh)
+        self.fh.close()
 
     def dontUppercase(self):
         self.shouldUppercase=False
@@ -83,9 +83,41 @@ class FastaReader:
             [defline,seq]=reader.nextSequence()
             if(not defline): break
             size+=len(seq)
+        reader.close()
         return size
 
-#   size=FastaReader.getSize(filename)
-#   FastaReader.readAll(filename) # returns hash : id->sequence
-#   FastaReader.readAllAndKeepDefs(filename) # returns hash : id->[def,seq]
-#   seq=FastaReader.firstSequence(filename)
+    @classmethod
+    def firstSequence(cls,filename):
+        reader=FastaReader(filename)
+        [defline,seq]=reader.nextSequence()
+        reader.close()
+        return [defline,seq]
+
+    @classmethod
+    def readAll(cls,filename):
+        hash={}
+        reader=FastaReader(filename)
+        while(True):
+            [defline,seq]=reader.nextSequence()
+            if(not defline): break;
+            match=re.search("^\s*>(\S+)",defline)
+            if(not match): raise Exception("can't parse defline: "+defline)
+            id=match.group(1)
+            hash[id]=seq
+        reader.close()
+        return hash
+
+    @classmethod
+    def readAllAndKeepDefs(cls,filename):
+        hash={}
+        reader=FastaReader(filename)
+        while(True):
+            [defline,seq]=reader.nextSequence()
+            if(not defline): break;
+            match=re.search("^\s*>(\S+)",defline)
+            if(not match): raise Exception("can't parse defline: "+defline)
+            id=match.group(1)
+            hash[id]=[defline,seq]
+        reader.close()
+        return hash
+        
