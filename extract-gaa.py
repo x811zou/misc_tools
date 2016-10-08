@@ -4,7 +4,7 @@ import os
 import gzip
 
 if(len(sys.argv)!=4):
-   print sys.argv[0]+" <in.vcf.gz> <begin> <end>"
+   print(sys.argv[0]+" <in.vcf.gz> <begin> <end>")
    sys.exit(0)
 [infile,begin,end]=sys.argv[1:]
 begin=int(begin)
@@ -17,10 +17,10 @@ for line in f:
    if len(fields)<7: continue
    if fields[0]=="#CHROM":
       header=fields
-      print line
+      print(line)
    elif fields[6]=="PASS":
       [chr,pos,id,ref,alt]=fields[:5]
       pos=int(pos)
-      if pos>=begin and pos<=end: print line
+      if pos>=begin and pos<=end: print(line)
 
 
