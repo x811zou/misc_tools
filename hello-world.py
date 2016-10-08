@@ -3,10 +3,17 @@ from __future__ import (absolute_import, division, print_function,
    unicode_literals, generators, nested_scopes, with_statement)
 from builtins import (bytes, dict, int, list, object, range, str, ascii, chr, 
    hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from ProgramName import *
+import ProgramName
+import sys
 
-name=programName();
-print(name)
+# Process command line
+name=ProgramName.get();
+if(len(sys.argv)!=3):
+  print(name," <parm1> <parm2>")
+  exit()
+parm1=sys.argv[1]
+parm2=sys.argv[2]
+print(parm1, parm2)
 
 print ("Hello, world\n")
 

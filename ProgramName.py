@@ -1,6 +1,6 @@
 import sys
 import os
 
-def programName():
+def get():
   return os.path.basename(sys.argv[0])
 
