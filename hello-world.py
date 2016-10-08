@@ -5,6 +5,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii, chr,
    hex, input, next, oct, open, pow, round, super, filter, map, zip)
 import ProgramName
 import sys
+import os
 from Interval import Interval
 
 # Process command line
@@ -41,7 +42,18 @@ main()
 
 my_generator = (letter for letter in 'abcdefg')
 
+#import tempfile
+#[fh,filename]=tempfile.mkstemp(prefix="tmp.");
+#print(filename,fh)
+#os.close(fh)
+
+import TempFilename
+filename=TempFilename.generate()
+fh=open(filename,'w')
+print(fh)
 x=0
-while(x<10):  print(x); x+=3
+while(x<10):  fh.write(str(x)); x+=3
+fh.close()
+os.remove(filename)
 
 
