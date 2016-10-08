@@ -3,21 +3,89 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function
+from __future__ import (absolute_import, division, print_function,
    unicode_literals, generators, nested_scopes, with_statement)
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+import re
 
 #=========================================================================
 # Attributes:
-#   
-# Methods:
-#   FastaReader()
+#   fh : file handle
+#   shouldUppercase : whether to uppercase all letters
+#   save : buffered line
+# Instance Methods:
+#   FastaReader(filename)
+#   reader=readerFromFileHandle(fileHandle);
+#   [defline,sequence]=reader.nextSequence()
+#   reader.close()
+#   reader.dontUppercase()
+#   reader.doUppercase()
+# Class Methods:
+#   size=FastaReader.getSize(filename)
+#   FastaReader.readAll(filename) # returns hash : id->sequence
+#   FastaReader.readAllAndKeepDefs(filename) # returns hash : id->[def,seq]
+#   seq=FastaReader.firstSequence(filename)
 #=========================================================================
 class FastaReader:
     """FastaReader"""
-    def __init__(self):
-        pass
+    def __init__(self,filename):
+        self.shouldUppercase=True
+        self.save=None
+        if(filename is not None):
+            self.fh=open(filename,"r")
 
+    @classmethod
+    def readerFromFileHandle(cls,fh):
+        reader=FastaReader()
+        reader.fh=fh
 
+    def close(self):
+        close(self.fh)
 
+    def dontUppercase(self):
+        self.shouldUppercase=False
+
+    def doUppercase(self):
+        self.shouldUppercase=True
+
+    def nextSequence(self):
+        defline=""
+        seq=""
+        fh=self.fh
+        while(True):
+            if(self.save):
+                line=self.save
+                self.save=None
+            else:
+                line=fh.readline()
+                if(line): line=line.rstrip()
+            if(not line): return [None,None]
+            if(re.search("^\s*>",line)):
+                defline=line
+                while(True):
+                    line=fh.readline()
+                    if(not line): break;
+                    line=line.rstrip()
+                    if(re.search("^\s*>",line)):
+                        self.save=line
+                        break
+                    "".join(line.split())
+                    if(self.shouldUppercase): seq+=line.upper()
+                    else: seq+=line
+                return [defline,seq]
+
+    @classmethod
+    def getSize(cls,filename):
+        reader=FastaReader(filename)
+        size=0
+        while(True):
+            [defline,seq]=reader.nextSequence()
+            if(not defline): break
+            size+=len(seq)
+        return size
+
+#   size=FastaReader.getSize(filename)
+#   FastaReader.readAll(filename) # returns hash : id->sequence
+#   FastaReader.readAllAndKeepDefs(filename) # returns hash : id->[def,seq]
+#   seq=FastaReader.firstSequence(filename)
