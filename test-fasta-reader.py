@@ -10,6 +10,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from FastaReader import FastaReader
 from FastaWriter import FastaWriter
+from Translation import Translation
 
 filename="/home/bmajoros/1000G/assembly/combined/HG00096/1.fasta"
 
@@ -41,4 +42,11 @@ writer=FastaWriter()
 writer.writeFasta(">ABCD","ATCGATCGTAGCTAGTCTGCGCGTATCGTCAGTCTCTATCGATCGTACTGCGATCTAGCTAGCTGATCGTAGCTTCTATGACTGCTAGTCATCTAGCTAGCTGATCGTAGCTGCGCGCGATATATTGCATCTATGCTATCATTGCATGCTAGCTCTAGCTAGTCGATGCTATCTTAGCTAC","test1.fasta")
 
 writer.appendToFasta(">XYZ","GATTACA","test1.fasta")
+
+print(Translation.translate(seq))
+print("forward:",seq)
+print("revomp: ",Translation.reverseComplement(seq))
+
+
+
 
