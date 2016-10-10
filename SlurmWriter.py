@@ -1,0 +1,106 @@
+#=========================================================================
+# This is OPEN SOURCE SOFTWARE governed by the Gnu General Public
+# License (GPL) version 3, as described at www.opensource.org.
+# Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
+#=========================================================================
+from __future__ import (absolute_import, division, print_function,
+   unicode_literals, generators, nested_scopes, with_statement)
+from builtins import (bytes, dict, int, list, object, range, str, ascii,
+   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+import os
+
+#=========================================================================
+# Attributes:
+#   commands : array of string
+#   niceValue : empty, or integer (nice value)
+#   memValue : empty, or integer (mem value, in megabytes)
+#   queue : partition name
+#   threadsValue : number of CPUs requested
+# Instance Methods:
+#   SlurmWriter()
+#   writer.addCommand(cmd)
+#   writer.nice() # turns on "nice" (sets it to 100 by default)
+#   writer.mem(1500)
+#   writer.threads(16)
+#   writer.setQueue("new,all")
+#   writer.writeArrayScript(slurmDir,jobName,runDir,maxParallel,
+#                           additional_SBATCH_lines);
+#=========================================================================
+class SlurmWriter:
+    """SlurmWriter"""
+    def __init__(self):
+        self.commands=[]
+        self.niceValue=None
+        self.MemValue=None
+        self.threadsValue=None
+        self.queue=None
+
+    def addCommand(self,cmd):
+        self.commands.append(cmd)
+
+    def nice(self,value=100):
+        self.niceValue=value
+
+    def mem(self,value):
+        self.memValue=value
+
+    def threads(self,value):
+        self.threadsValue=value
+        
+    def setQueue(self,value):
+        self.queue=value
+
+    def writeArrayScript(self,slurmDir,jobName,runDir,maxParallel,
+                         moreSBATCH=""):
+        if(maxParallel<1): raise Exception("specify maxParallel parameter")
+        moreSBATCH=moreSBATCH.rstrip()
+        if(self.niceValue>0) :
+            moreSBATCH+="#SBATCH --nice="+str(self.niceValue)+"\n"
+        if(self.memValue>0):
+            moreSBATCH+="#SBATCH --mem="+str(self.memValue)+"\n"
+        if(self.threadsValue>0):
+            moreSBATCH+="#SBATCH --cpus-per-task="+str(self.threadsValue)+"\n"
+        if(len(moreSBATCH)>0):
+            moreSBATCH=moreSBATCH.rstrip()+"\n"
+        queue=""
+        if(len(self.queue)>0):
+            queue="#SBATCH -p "+self.queue+"\n"
+        if(os.path.exists(slurmDir)):
+               os.system("rm -f "+slurmDir+"/*.slurm "+slurmDir+
+                         "/outputs/*.output")
+        os.system("mkdir -p "+slurmDir+"/outputs")
+        commands=self.commands
+        numCommands=len(commands)
+        numJobs=numCommands
+        for i in range(0,numCommands):
+            command=commands[i]
+            index=i+1
+            filename=slurmDir+"/command"+str(index)+".sh"
+            with open(filename,"w") as OUT:
+                OUT.write("#!/bin/sh\n")
+                OUT.write(command+"\n")
+            os.system("chmod +x "+filename)
+        filename=slurmDir+"/array.slurm"
+        with open(filename,"w") as OUT:
+            OUT.write("\n".join(
+                    ["#!/bin/sh",
+                     "#",
+                     "#SBATCH --get-user-env",
+                     "#SBATCH -J "+jobName,
+                     "#SBATCH -A "+jobName,
+                     "#SBATCH -o "+slurmDir+"/outputs/%a.output",
+                     "#SBATCH -e "+slurmDir+"/outputs/%a.output",
+                     "#SBATCH --array=1-"+str(numJobs)+"%"+str(maxParallel),
+                     queue+moreSBATCH+"#",
+                     slurmDir+"/command${SLURM_ARRAY_TASK_ID}.sh\n"
+                     ]))
+
+
+
+
+
+
+
+
+
+
