@@ -24,7 +24,7 @@ import os
 #   writer.threads(16)
 #   writer.setQueue("new,all")
 #   writer.writeArrayScript(slurmDir,jobName,runDir,maxParallel,
-#                           additional_SBATCH_lines);
+#                           additional_SBATCH_lines)
 #=========================================================================
 class SlurmWriter:
     """SlurmWriter"""
