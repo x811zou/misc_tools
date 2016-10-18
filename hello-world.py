@@ -59,7 +59,7 @@ while(x<10):  fh.write(str(x)); x+=3
 fh.close()
 os.remove(filename)
 
-config=ConfigFile("/home/bmajoros/1000G/ICE/model9/ice.0-43.config")
+config=ConfigFile("test/data/ice.0-43.config")
 print(config.lookup("donor-consensus"))
 
 a=[1.1, 6.4, 9.3, 3.4, 9.2, 4.6, 1.6, 0.3]

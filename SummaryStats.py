@@ -32,12 +32,12 @@ class SummaryStats:
         sumX=0
         sumXX=0
         for i in range(0,n):
-	    x=array[i]
-	    sumX+=x
-	    sumXX+=x*x
+            x=array[i]
+            sumX+=x
+            sumXX+=x*x
             if(i==0): minX=maxX=x
             if(x<minX): minX=x
-            if(x>max): maxX=x
+            if(x>maxX): maxX=x
         meanX=sumX/n
         varX=None if n<2 else (sumXX-sumX*sumX/n)/(n-1)
         if(varX<0): varX=0
@@ -70,13 +70,13 @@ class SummaryStats:
         sumYY=0.0
         n=len(Xs)
         for i in range(0,n):
-	    x=Xs[i]
-	    y=Ys[i]
-	    sumX+=x
-	    sumY+=y
-	    sumXY+=x*y
-	    sumXX+=x*x
-	    sumYY+=y*y
+            x=Xs[i]
+            y=Ys[i]
+            sumX+=x
+            sumY+=y
+            sumXY+=x*y
+            sumXX+=x*x
+            sumYY+=y*y
         r=(sumXY-sumX*sumY/n)/math.sqrt((sumXX-sumX*sumX/n)*(sumYY-sumY*sumY/n))
         return r
 

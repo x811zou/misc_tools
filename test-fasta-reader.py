@@ -12,7 +12,7 @@ from FastaReader import FastaReader
 from FastaWriter import FastaWriter
 from Translation import Translation
 
-filename="/home/bmajoros/1000G/assembly/combined/HG00096/1.fasta"
+#filename="/home/bmajoros/1000G/assembly/combined/HG00096/1.fasta"
 
 #reader=FastaReader("/home/bmajoros/1000G/assembly/combined/HG00096/1.fasta")
 #while(True):
@@ -22,13 +22,15 @@ filename="/home/bmajoros/1000G/assembly/combined/HG00096/1.fasta"
 #    L=len(seq)
 #    print("length="+str(L))
 
-filename="/home/bmajoros/1000G/assembly/BRCA1-NA19782.fasta";
+#filename="/home/bmajoros/1000G/assembly/BRCA1-NA19782.fasta";
+filename="/Users/bmajoros/python/test/data/subset.fasta"
 print(FastaReader.getSize(filename))
 
 [defline,seq]=FastaReader.firstSequence(filename)
 print(len(seq))
 
-filename="/home/bmajoros/1000G/assembly/test.fasta"
+#filename="/home/bmajoros/1000G/assembly/test.fasta"
+filename="/Users/bmajoros/python/test/data/subset.fasta"
 hash=FastaReader.readAllAndKeepDefs(filename)
 for key in hash.keys():
     [defline,seq]=hash[key]
@@ -45,7 +47,7 @@ writer.appendToFasta(">XYZ","GATTACA","test1.fasta")
 
 print(Translation.translate(seq))
 print("forward:",seq)
-print("revomp: ",Translation.reverseComplement(seq))
+print("revcomp: ",Translation.reverseComplement(seq))
 
 
 

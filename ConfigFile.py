@@ -40,7 +40,7 @@ class ConfigFile:
         hash=self.hash
         with open(filename,"r") as fh:
             while(True):
-	        line=fh.readline()
+                line=fh.readline()
                 if(not line): break
                 match=re.search("^(.*)#",line);
                 if(match): line=match.group(1)
@@ -48,5 +48,5 @@ class ConfigFile:
                 if(match):
                     key=match.group(1)
                     value=match.group(2)
-	            hash[key]=value
-
+                    hash[key]=value
+                    

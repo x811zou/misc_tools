@@ -45,61 +45,61 @@ class FastbTrack:
         self.data=data
         self.deflineExtra=deflineExtra
 
-        def getType(self):
-            return self.type
+    def getType(self):
+        return self.type
 
-        def getData(self):
-            return self.data
+    def getData(self):
+        return self.data
 
-        def isDiscrete(self):
-            return self.type=="discrete"
+    def isDiscrete(self):
+        return self.type=="discrete"
 
-        def isContinuous(self):
-            return self.type=="continuous"
+    def isContinuous(self):
+        return self.type=="continuous"
 
-        def getID(self):
-            return self.id
+    def getID(self):
+        return self.id
 
-        def save(self,fh):
-            writer=FastaWriter()
-            id=self.id
-            data=self.data
-            deflineExtra=self.deflineExtra
-            if(self.isDiscrete()):
-                writer.addToFasta(">"+id+" "+deflineExtra,data,fh)
-            else:
-                fh.write("%"+id+" "+deflineExtra+"\n")
-                n=len(data)
-                for(i in range(0,n)): fh.write(str(data[i])+"\n")
+    def save(self,fh):
+        writer=FastaWriter()
+        id=self.id
+        data=self.data
+        deflineExtra=self.deflineExtra
+        if(self.isDiscrete()):
+            writer.addToFasta(">"+id+" "+deflineExtra,data,fh)
+        else:
+            fh.write("%"+id+" "+deflineExtra+"\n")
+            n=len(data)
+            for i in range(0,n): fh.write(str(data[i])+"\n")
 
-        def getNonzeroRegions(self):
-            """getNonzeroRegions() returns array of Intervals"""
-            data=self.data
-            if(self.isDiscrete()): raise Exception("track is not continuous")
-            L=len(data)
-            intervals=[]
-            begin=None
-            for(i in range(0,L)):
-                x=data[i]
-                if(x>0 and (i==0 or data[i-1]==0)): begin=i
-                elif(x==0 and i>0 and data[i-1]>0):
-                    intervals.append(Interval(begin,i))
-            if(L>0 and data[L-1]>0):
-                intervals.append(Interval(begin,L))
-            return intervals
+    def getNonzeroRegions(self):
+        """getNonzeroRegions() returns array of Intervals"""
+        data=self.data
+        if(self.isDiscrete()): raise Exception("track is not continuous")
+        L=len(data)
+        intervals=[]
+        begin=None
+        for i in range(0,L):
+            x=data[i]
+            if(x>0 and (i==0 or data[i-1]==0)): begin=i
+            elif(x==0 and i>0 and data[i-1]>0):
+                intervals.append(Interval(begin,i))
+        if(L>0 and data[L-1]>0):
+            intervals.append(Interval(begin,L))
+        return intervals
 
-        def rename(self,newID):
-            self.id=newID
+    def rename(self,newID):
+        self.id=newID
 
-        def getLength(self):
-            return len(self.data)
+    def getLength(self):
+        return len(self.data)
 
-        def slice(self,begin,end):
-            return FastbTrack(self.type,self.id,data[begin:end],
-                              self.deflineExtra)
+    def slice(self,begin,end):
+        return FastbTrack(self.type,self.id,self.data[begin:end],
+                          self.deflineExtra)
 
-        def setSequence(self,string):
-            self.data=string
+    def setSequence(self,string):
+        self.data=string
 
-        def setData(self,values):
-            self.data=values
+    def setData(self,values):
+        self.data=values

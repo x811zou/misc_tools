@@ -8,6 +8,7 @@ from __future__ import (absolute_import, division, print_function,
    unicode_literals, generators, nested_scopes, with_statement)
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+import re
 from FastbTrack import FastbTrack
 
 ######################################################################
@@ -36,7 +37,7 @@ from FastbTrack import FastbTrack
 ######################################################################
 
 class Fastb:
-    def __init__(self,filename):
+    def __init__(self,filename=None):
         self.trackArray=[]
         self.trackHash={}
         if(filename and len(filename)>0): self.load(filename)
@@ -57,7 +58,7 @@ class Fastb:
     def save(self,filename):
         with open(filename,"w") as OUT:
             N=self.numTracks()
-            for(i in range(0,N)): self.getIthTrack(i).save(OUT)
+            for i in range(0,N): self.getIthTrack(i).save(OUT)
 
     def renameTrack(self,oldName,newName):
         hash=self.trackHash
@@ -74,19 +75,19 @@ class Fastb:
     def slice(self,begin,end):
         newFastb=Fastb()
         n=self.numTracks()
-        for(i in range(0,n)):
+        for i in range(0,n):
             track=self.getIthTrack(i)
             newFastb.addTrack(track.slice(begin,end))
         return newFastb
 
     def dropTrack(self,name):
-        n=selfnumTracks()
+        n=self.numTracks()
         index=None
-        for(i in range(0,n)):
+        for i in range(n):
             if(self.getIthTrack(i).getID()==name):
                 index=i
                 break
-        if(not index): raise Exception("can't find track "+name)
+        if(index is None): raise Exception("can't find track "+name)
         del self.trackArray[index]
         del self.trackHash[name]
 
@@ -95,6 +96,7 @@ class Fastb:
         with open(filename,"r") as IN:
             while(True):
                 line=IN.readline()
+                if(not line): break
                 line=line.rstrip()
                 line=line.lstrip()
                 if(re.search("\S",line)): lines.append(line)
@@ -106,27 +108,26 @@ class Fastb:
             if(match):
                 (op,id,rest)=(match.group(1),match.group(2),match.group(3))
                 if(op==">"):
-	            seq=""
-                    i+=1
-	            while(i<numLines):
-	                line=lines[i]
-	                if(re.search("^\s*([%>])\s*\S+.*",line)):
-                            i-=1
-                            break
-	                seq+=line
-                        i+=1
-	            track=FastbTrack("discrete",id,seq,rest)
-	            self.addTrack(track)
-                else:
-	            data=[]
+                    seq=""
                     i+=1
                     while(i<numLines):
-	                line=lines[i]
-	                if(re.search("^\s*[%>]\s*\S+.*",line)):
-                            i-=1
+                        line=lines[i]
+                        if(re.search("^\s*([%>])\s*\S+.*",line)):
                             break
-	                match=re.search("\S",line)
-	                data.append(float(match.group(1)))
-	            track=FastbTrack("continuous",id,data,rest)
-	            self.addTrack(track)
+                        seq+=line
+                        i+=1
+                    track=FastbTrack("discrete",id,seq,rest)
+                    self.addTrack(track)
+                else:
+                    data=[]
+                    i+=1
+                    while(i<numLines):
+                        line=lines[i]
+                        if(re.search("^\s*[%>]\s*\S+.*",line)):
+                            break
+                        match=re.search("(\S+)",line)
+                        data.append(float(match.group(1)))
+                        i+=1
+                    track=FastbTrack("continuous",id,data,rest)
+                    self.addTrack(track)
             else: raise Exception("can't parse line: "+line+"\n")
