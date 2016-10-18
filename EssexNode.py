@@ -9,6 +9,7 @@ from __future__ import (absolute_import, division, print_function,
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 import copy
+import re
 
 ######################################################################
 #
@@ -248,7 +249,7 @@ class EssexNode:
         if(n==0):
             file.write(tab+"<"+tag+"/>")
             return
-        if(EXONS[tag]):
+        if(EssexNode.EXONS.get(tag,None)):
             self.printExonXML(tag,tab,depth,file)
             return
         if(tag=="bad-donor" or tag=="bad-acceptor"):
@@ -305,7 +306,7 @@ class EssexNode:
                        +seq+"\" score=\""+score+"\" threshold=\""+threshold+
                        "\"/>")
             return
-        if(VARIANTS[tag]):
+        if(EssexNode.VARIANTS.get(tag,None)):
             file.write(tab+"<"+tag+">\n")
             for i in range(n):
                 variant=self.getIthElem(i)
@@ -335,15 +336,16 @@ class EssexNode:
                     child.printRecursiveXML(depth+1,file)
                 else:
                     tab='   '*(depth+1)
-                    if(SINGLETONS[child]):
+                    if(EssexNode.SINGLETONS.get(child,None)):
                         file.write("\n"+tab+"<"+child+"/>")
                     else: file.write("\n"+tab+child)
             file.write("\n"+tab+"</"+tag+">")
         else:
             for i in range(n):
                 elem=elements[i]
-                if(SINGLETONS[elem]): file.write("<"+elem+"/>")
+                if(EssexNode.SINGLETONS.get(elem,None)):
+                    file.write("<"+elem+"/>")
                 else:
                     if(i>0): file.write(" ")
                     file.write(elem)
-            file.wite("</"+tag+">")
+            file.write("</"+tag+">")
