@@ -37,7 +37,7 @@ class EssexParser:
         if(filename): self.open(filename)
 
     def open(self,filename):
-        if(self.isOpen) self.close()
+        if(self.isOpen): self.close()
         if(not os.path.exists(filename)):
             raise Exception(filename+" does not exist")
         file=self.file=open(filename,"r")
@@ -62,11 +62,11 @@ class EssexParser:
         if(not self.isOpen): raise Exception("file is not open")
         scanner=self.scanner
         token=scanner.nextToken()
-        if(not token) return None
+        if(not token): return None
         if(token.isOpenParen()): return self.parseTuple()
         elif(token.isLiteral()): return token.getLexeme()
         else:
-            lexeme=token->getLexeme()
+            lexeme=token.getLexeme()
             exit("Syntax error near \n"+token+"\n")
 
     def parseTuple(self):

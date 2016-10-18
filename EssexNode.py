@@ -43,7 +43,7 @@ import copy
 #   node.print(filehandle)
 #   node.printXML(filehandle)
 #   node.recurse(visitor) # must have methods enter(node) and leave(node)
-#   array=node.pathQuery("report/reference-transcript/type")
+#   oneElem=node.pathQuery("report/reference-transcript/type")
 ######################################################################
 
 class EssexNode:
@@ -61,7 +61,11 @@ class EssexNode:
         if(len(parms)>0):
             self.tag=parms.pop(0)
             if(len(parms)>0):
-                self.elements=copy.copy(parms)
+                self.elements=copy.deepcopy(parms)
+            else: self.elements=[]
+        else:
+            self.tag=""
+            self.elements=[]
 
     def getTag(self):
         return self.tag
@@ -74,10 +78,9 @@ class EssexNode:
         return len(elements) if elements else 0
 
     def getIthElem(self,i):
-        elements=self.elements
-        return elements[i]
+        return self.elements[i]
 
-    def setIthElem(self,i.child):
+    def setIthElem(self,i,child):
         self.elements[i]=child
 
     def getElements(self):
@@ -85,13 +88,13 @@ class EssexNode:
 
     @classmethod
     def isaNode(cls,x):
-        return type(x)=="EssexNode"
+        return isinstance(x,EssexNode)
 
     def findChild(self,tag):
         elements=self.elements
         for elem in elements:
             if(EssexNode.isaNode(elem) and elem.getTag()==tag):
-	        return elem
+                return elem
         return None
 
     def findChildren(self,tag):
@@ -99,14 +102,14 @@ class EssexNode:
         elements=self.elements
         for elem in elements:
             if(EssexNode.isaNode(elem) and elem.getTag()==tag):
-	        results.append(elem)
+                results.append(elem)
         return results
 
     def getAttribute(self,tag):
         elements=self.elements
         for elem in elements:
             if(EssexNode.isaNode(elem) and elem.getTag()==tag):
-	        return elem.getIthElem(0)
+                return elem.getIthElem(0)
         return None
 
     def print(self,file):
@@ -120,7 +123,7 @@ class EssexNode:
         if(children):
             for child in children:
                 if(EssexNode.isaNode(child)):
-	            if(child.tag==tag or child.hasDescendent(tag)): return True
+                    if(child.tag==tag or child.hasDescendent(tag)): return True
                 elif(child==tag): return True
         return False
 
@@ -148,7 +151,7 @@ class EssexNode:
             for j in range(depth):
                 attr=attr.findChild(fields[j])
                 if(attr is None): break
-            if(attr is not None) return attr
+            if(attr is not None): return attr
         return None
 
     def recurse(self,visitor):
@@ -160,7 +163,6 @@ class EssexNode:
                 visitor.enter(elem)
                 visitor.leave(elem)
         visitor.leave(self)
-
 
     def findDesc(self,tag,array):
         children=self.elements
@@ -181,17 +183,17 @@ class EssexNode:
 
     def countDescendentOrDatum(self,tag):
         count=0
-        if(self.tag==tag) count+=1
+        if(self.tag==tag): count+=1
         children=self.elements
         for child in children:
             if(EssexNode.isaNode(child)):
                 count+=child.countDescendentOrDatum(tag)
             else:  # not a node
-                if(child==tag) count+=1
+                if(child==tag): count+=1
         return count
     
     def hasDescendentOrDatum(self,tag):
-        if(self.tag==tag) return True
+        if(self.tag==tag): return True
         children=self.elements
         for child in children:
             if(EssexNode.isaNode(child)):
@@ -217,12 +219,12 @@ class EssexNode:
             for i in range(n):
                 child=elements[i]
                 if(EssexNode.isaNode(child)):
-	            file.write("\n")
-	            child.printRecursive(depth+1,file)
+                    file.write("\n")
+                    child.printRecursive(depth+1,file)
                 else:
-	            tab='   '*($depth+1)
-	            file.write("\n"+tab+child)
-         else:
+                    tab='   '*(depth+1)
+                    file.write("\n"+tab+child)
+        else:
              for i in range(n):
                  elem=elements[i]
                  file.write(" "+elem)
@@ -299,7 +301,7 @@ class EssexNode:
             seq=self.getIthElem(2)
             score=self.getIthElem(3)
             threshold=self.getIthElem(5)
-            file.write(tab+"<"+tag+" type=\""+type"+\" pos=\""+pos+"\" seq=\""
+            file.write(tab+"<"+tag+" type=\""+type+"\" pos=\""+pos+"\" seq=\""
                        +seq+"\" score=\""+score+"\" threshold=\""+threshold+
                        "\"/>")
             return
@@ -329,19 +331,19 @@ class EssexNode:
             for i in range(n):
                 child=elements[i]
                 if(EssexNode.isaNode(child)):
-	            file.write("\n")
-	            child.printRecursiveXML(depth+1,file)
+                    file.write("\n")
+                    child.printRecursiveXML(depth+1,file)
                 else:
-	            tab='   '*(depth+1)
-	            if(SINGLETONS[child]):
+                    tab='   '*(depth+1)
+                    if(SINGLETONS[child]):
                         file.write("\n"+tab+"<"+child+"/>")
-	            else: file.write("\n"+tab+child)
+                    else: file.write("\n"+tab+child)
             file.write("\n"+tab+"</"+tag+">")
         else:
             for i in range(n):
                 elem=elements[i]
                 if(SINGLETONS[elem]): file.write("<"+elem+"/>")
                 else:
-	            if(i>0): file.write(" ")
-	            file.write(elem)
+                    if(i>0): file.write(" ")
+                    file.write(elem)
             file.wite("</"+tag+">")
