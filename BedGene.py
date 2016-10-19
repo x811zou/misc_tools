@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
    unicode_literals, generators, nested_scopes, with_statement)
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from Interval import Interval
 
 #=========================================================================
 # Attributes:
@@ -18,6 +19,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #   exons : array of Interval : includes both CDS and UTR
 # Instance Methods:
 #   gene=BedGene(chr,strand)
+#   interval=gene.getInterval()
 #   gene.addCDS(Interval(begin,end))
 #   gene.addUTR(Interval(begin,end))
 #   gene.addExon(Interval(begin,end))
@@ -31,6 +33,33 @@ class BedGene:
         self.exons=[]
         self.chr=chr
         self.strand=strand
+        self.CDS=[]
+        self.UTR=[]
+        self.exons=[]
+
+    def getInterval(self):
+        cdsInterval=self.getInterval_array(self.CDS)
+        utrInterval=self.getInterval_array(self.UTR)
+        exonInterval=self.getInterval_array(self.exons)
+        begin=cdsInterval.begin
+        end=cdsInterval.begin
+        if(utrInterval.begin):
+            if(not begin or utrInterval.begin<begin):
+                begin=utrInterval.begin
+            if(not end or utrInterval.end>end):
+                end=utrInterval.end
+        if(exonInterval.begin):
+            if(not begin or exonInterval.begin<begin):
+                begin=exonInterval.begin
+            if(not end or exonInterval.end>end):
+                end=exonInterval.end
+
+    def getInterval_array(self,array):
+        begin=end=None
+        for interval in array:
+            if(not begin or interval.begin<begin): begin=interval.begin
+            if(not end or interval.end>end): end=interval.end
+        return Interval(begin,end)
 
     def addCDS(self,interval):
         self.CDS.append(interval)

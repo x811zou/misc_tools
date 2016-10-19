@@ -28,7 +28,7 @@ class BedGeneReader:
     def __init__(self):
         pass
 
-    def read(CDS_filename,UTR_filename=None):
+    def read(self,CDS_filename,UTR_filename=None):
         genes=self.readCDS(CDS_filename)
         if(UTR_filename): self.addUTR(UTR_filename,genes)
         return genes
@@ -59,7 +59,7 @@ class BedGeneReader:
         return hash
 
     def addUTR(self,filename,genes):
-        hash=hashGenes(genes)
+        hash=self.hashGenes(genes)
         reader=BedReader(filename)
         while(True):
             record=reader.nextRecord()
@@ -67,7 +67,7 @@ class BedGeneReader:
             if(not record.isBed6()):
                 raise Exception("BED file has too few fields")
             id=record.name
-            gene=genesByName.get(id,None)
+            gene=hash.get(id,None)
             if(not gene): 
                 gene=BedGene(id,record.chr,record.strand)
                 genes.append(gene)

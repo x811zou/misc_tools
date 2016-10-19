@@ -55,7 +55,7 @@ class Interval:
       return self.begin>=self.end
 
    def clone(self):
-      return Interval(begin,end)
+      return Interval(self.begin,self.end)
 
    def intersect(self,other):
       if(self.isEmpty()): return self.clone()
