@@ -45,7 +45,7 @@ class BedGeneReader:
             id=record.name
             gene=genesByName.get(id,None)
             if(not gene):
-                gene=Gene(id,record.chr,record.strand)
+                gene=BedGene(id,record.chr,record.strand)
                 genesByName[id]=gene
                 genes.append(gene)
             gene.addCDS(record.interval)
@@ -68,4 +68,10 @@ class BedGeneReader:
                 raise Exception("BED file has too few fields")
             id=record.name
             gene=genesByName.get(id,None)
-        
+            if(not gene): 
+                gene=BedGene(id,record.chr,record.strand)
+                genes.append(gene)
+                hash[id]=gene
+            gene.addUTR(record.interval)
+        for gene in genes:
+            gene.coalesce()
