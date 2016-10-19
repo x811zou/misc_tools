@@ -10,6 +10,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 
 #=========================================================================
 # Attributes:
+#   ID : name of gene
 #   chr : string (chromosome name)
 #   strand : string ("+" or "-", or "." if unknown)
 #   CDS : array of Interval
@@ -25,7 +26,8 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #=========================================================================
 class BedGene:
     """BedGene"""
-    def __init__(self,chr,strand):
+    def __init__(self,ID,chr,strand):
+        self.ID=ID
         self.exons=[]
         self.chr=chr
         self.strand=strand

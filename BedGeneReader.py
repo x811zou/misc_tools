@@ -20,14 +20,18 @@ from BedGene import BedGene
 #
 # Private Methods:
 #   genes=self.readCDS(filename)
+#   self.addUTR(filename,genes)
+#   hash=self.hashGenes(genes)
 #=========================================================================
 class BedGeneReader:
     """BedGeneReader reads BedGene objects from a BED file"""
     def __init__(self):
         pass
 
-    def read(CDS_filename,UTR_filename):
+    def read(CDS_filename,UTR_filename=None):
         genes=self.readCDS(CDS_filename)
+        if(UTR_filename): self.addUTR(UTR_filename,genes)
+        return genes
 
     def readCDS(self,filename):
         reader=BedReader(filename)
@@ -41,8 +45,27 @@ class BedGeneReader:
             id=record.name
             gene=genesByName.get(id,None)
             if(not gene):
-                gene=Gene(record.chr,record.strand)
+                gene=Gene(id,record.chr,record.strand)
                 genesByName[id]=gene
                 genes.append(gene)
+            gene.addCDS(record.interval)
         reader.close()
         return genes
+
+    def hashGenes(self,genes):
+        hash={}
+        for gene in genes:
+            hash[gene.ID]=gene
+        return hash
+
+    def addUTR(self,filename,genes):
+        hash=hashGenes(genes)
+        reader=BedReader(filename)
+        while(True):
+            record=reader.nextRecord()
+            if(not record): break
+            if(not record.isBed6()):
+                raise Exception("BED file has too few fields")
+            id=record.name
+            gene=genesByName.get(id,None)
+        
