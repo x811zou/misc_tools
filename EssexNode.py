@@ -35,7 +35,7 @@ import re
 #   elem=node.findDescendent(tag) # returns node or undef
 #   bool=node.hasDescendentOrDatum(tagOrDatum)
 #   count=node.countDescendentOrDatum(tagOrDatum)
-#   n=nodecountDescendents(tag)
+#   n=node.countDescendents(tag)
 #   bool=node.hasDescendent(tag)
 #   string=node.getAttribute(attributeTag)
 #   array=node.getElements()
