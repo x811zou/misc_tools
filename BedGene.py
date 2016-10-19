@@ -53,6 +53,7 @@ class BedGene:
                 begin=exonInterval.begin
             if(not end or exonInterval.end>end):
                 end=exonInterval.end
+        return Interval(begin,end)
 
     def getInterval_array(self,array):
         begin=end=None
