@@ -27,6 +27,7 @@ class Pipe:
         self.iter=iter(p.stdout.readline, b'')
 
     def readline(self):
-        line=next(self.iter)
+        line=next(self.iter,None)
+        if(not line): return None
         line=line.decode(sys.stdout.encoding).rstrip()
         return line
