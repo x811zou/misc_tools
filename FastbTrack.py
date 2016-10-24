@@ -35,7 +35,10 @@ from Interval import Interval
 #   bool=track.isContinuous()
 #   track.save(FILEHANDLE)
 #   array=track.getNonzeroRegions() # returns array of Interval
-#   newTrack=track.slice(begin,end); # [begin,end) => end not inclusive
+#   array=track.getContiguousRegions() # returns an array of Interval with 
+#      "value" attribute added
+#   newTrack=track.slice(begin,end) # [begin,end) => end not inclusive
+#   meanValue=track.getMean(interval=None) # only for continuous data
 ######################################################################
 
 class FastbTrack:
@@ -72,6 +75,28 @@ class FastbTrack:
             n=len(data)
             for i in range(0,n): fh.write(str(data[i])+"\n")
 
+    def getContiguousRegions(self):
+        """getContiguousRegions() returns an array of Interval objects
+        with a "value" attribute added
+        """
+        data=self.data
+        if(self.isDiscrete()): raise Exception("track is not continuous")
+        L=len(data)
+        intervals=[]
+        begin=0
+        for i in range(1,L):
+            x=data[i]
+            prev=data[i-1]
+            if(x==prev): continue
+            interval=Interval(begin,i)
+            interval.value=prev
+            intervals.append(interval)
+            begin=i
+        interval=Interval(begin,L)
+        interval.value=data[L-1]
+        intervals.append(interval)
+        return intervals
+
     def getNonzeroRegions(self):
         """getNonzeroRegions() returns array of Intervals"""
         data=self.data
@@ -103,3 +128,19 @@ class FastbTrack:
 
     def setData(self,values):
         self.data=values
+
+    def getMean(self,interval=None):
+        data=self.data
+        L=len(data)
+        begin=0
+        end=L
+        if(interval is not None): 
+            begin=interval.begin
+            end=interval.end
+            L=end-begin
+        sum=0.0
+        for i in range(begin,end): sum+=data[i]
+        mean=sum/L
+        return mean
+
+

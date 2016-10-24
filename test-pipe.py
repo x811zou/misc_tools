@@ -26,7 +26,7 @@ from Pipe import Pipe
 #    #line=line.decode("utf-8").rstrip()
 #    print("line=",line)
 
-pipe=Pipe("ls -la | sort -g")
+pipe=Pipe("ls -la | sort -g | sort -r | uniq -c")
 while(True):
     line=pipe.readline()
     if(not line): break

@@ -28,6 +28,6 @@ class Pipe:
 
     def readline(self):
         line=next(self.iter,None)
-        if(not line): return None
+        if(line is None): return None
         line=line.decode(sys.stdout.encoding).rstrip()
         return line
