@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 from __future__ import (absolute_import, division, print_function, 
    unicode_literals, generators, nested_scopes, with_statement)
 from builtins import (bytes, dict, int, list, object, range, str, ascii, chr, 
