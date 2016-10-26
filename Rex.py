@@ -13,12 +13,12 @@ import re
 # Attributes:
 #   match : returned from re.search()
 # Instance Methods:
-#   r=RegEx()
+#   r=Rex()
 #   bool=r.find("abc(\d+)def(\d+)ghi(\d+)",line)
 #   x=r[1]; y=r[2]; z=r[3]
 #=========================================================================
-class RegEx:
-    """RegEx -- more compact regular expression matching similar to Perl"""
+class Rex:
+    """Rex -- more compact regular expression matching similar to Perl"""
 
     def __init__(self):
         match=None
@@ -31,7 +31,7 @@ class RegEx:
         return self.match.group(index)
 
 def test_regex():
-    rex=RegEx()
+    rex=Rex()
     x=y=z=None
     if(rex.find("abc(\d+)abc(\d+)abc","ab123abc456abc789")):
         x=rex[1]; y=rex[2]
