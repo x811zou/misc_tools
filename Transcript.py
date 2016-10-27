@@ -45,7 +45,7 @@ import copy
 #   transcript.setExonTypes() # initial-exon, internal-exon, etc...
 #   transcript.setUTRtypes() # this is called by setExonTypes()
 #   transcript.setExonTypes("exon")
-#   success=transcript->loadExonSequences(axisSequence)
+#   success=transcript.loadExonSequences(axisSequence)
 #   seq=transcript.loadTranscriptSeq(axisSequence)
 #   bool=transcript.equals(other)
 #   bool=transcript.overlaps(otherTranscript)
@@ -137,41 +137,41 @@ class Transcript:
             exonsElem=essex.findChild("exons")
             if(exonsElem):
                 n=exonsElem.numElements()
-                for(i in range(0,n)):
-	            exon=exonsElem.getIthElem(i)
-	            begin=int(exon.getIthElem(0))
+                for i in range(0,n):
+                    exon=exonsElem.getIthElem(i)
+                    begin=int(exon.getIthElem(0))
                     end=int(exon.getIthElem(1))
-	            exon=Exon(begin,end,self)
-	            exons.append(exon)
+                    exon=Exon(begin,end,self)
+                    exons.append(exon)
             utrElem=essex.findChild("UTR")
             if(utrElem):
                 n=utrElem.numElements()
-                for(i in range(0,n)):
-	            exon=utrElem.getIthElem(i)
-	            begin=int(exon.getIthElem(0))
+                for i in range(0,n):
+                    exon=utrElem.getIthElem(i)
+                    begin=int(exon.getIthElem(0))
                     end=int(exon.getIthElem(1))
-	            exon=Exon(begin,end,self)
-	            UTR.append(exon)
+                    exon=Exon(begin,end,self)
+                    UTR.append(exon)
         
     def equals(self,other):
         if(self.getSource()!=other.getSource()): return False
         if(self.getStrand()!=other.getStrand()): return False
         if(self.getBegin()!=other.getBegin()): return False
-        if(self.getEnd()!=other.getEnd()) return False
+        if(self.getEnd()!=other.getEnd()): return False
         n=self.numExons()
         m=other.numExons()
         if(n!=m): return 0
-        for(i in range(0,m)):
-	    thisExon=self.getIthExon(i)
-	    thatExon=other.getIthExon(i)
-	    if(thisExon.getBegin()!=thatExon.getBegin()): return False
-	    if(thisExon.getEnd()!=thatExon.getEnd()): return False
+        for i in range(0,m):
+            thisExon=self.getIthExon(i)
+            thatExon=other.getIthExon(i)
+            if(thisExon.getBegin()!=thatExon.getBegin()): return False
+            if(thisExon.getEnd()!=thatExon.getEnd()): return False
         return True
 
     def compStrand(self,strand):
         if(strand=="+"): return "-"
         if(strand=="-"): return "+"
-        if($strand=="."): return "."
+        if(strand=="."): return "."
         raise Exception("Unknown strand \""+strand)
 
     def setTranscriptId(self,newId):
@@ -184,21 +184,21 @@ class Transcript:
         self.end=seqLen-begin
         self.strand=self.compStrand(self.strand)
         exons=self.exons
-        for(exon in exons): exon.reverseComplement(seqLen)
+        for exon in exons: exon.reverseComplement(seqLen)
         exons=self.UTR
-        for(exon in exons): exon.reverseComplement(seqLen)
+        for exon in exons: exon.reverseComplement(seqLen)
 
     def exonOverlapsExon(self,exon):
         exons=self.exons
         n=len(exons)
-        for(i in range(n)):
-	    myExon=exons[i]
-	    if(exon.overlaps(myExon)): return True
+        for i in range(n):
+            myExon=exons[i]
+            if(exon.overlaps(myExon)): return True
         return False
 
     def shiftCoords(self,delta):
         exons=self.exons
-        for(exon in exons): exon.shiftCoords(delta)
+        for exon in exons: exon.shiftCoords(delta)
         UTR=self.UTR
         for utr in UTR: utr.shiftCoords(delta)
         self.begin+=delta
@@ -209,17 +209,17 @@ class Transcript:
         numExons=len(exons)
         strand=self.strand
         for i in range(numExons):
-	    exon=exons[i]
-	    start=exon.begin
-	    length=exon.end-start
-	    exonSeq=axisSequenceRef[start:start+length]
-	    if(len(exonSeq)!=length):
-	        raise Exception("start="+str(start)+", length="+str(length)
+            exon=exons[i]
+            start=exon.begin
+            length=exon.end-start
+            exonSeq=axisSequenceRef[start:start+length]
+            if(len(exonSeq)!=length):
+                raise Exception("start="+str(start)+", length="+str(length)
                                 +", but substrate "+self.substrate+
                                 " ends at "+len(axisSequenceRef))
-	    if(strand=="-"):
-	        exonSeq=Translation.reverseComplement(exonSeq)
-	    exon.sequence=exonSeq
+            if(strand=="-"):
+                exonSeq=Translation.reverseComplement(exonSeq)
+            exon.sequence=exonSeq
         return True
 
     def loadTranscriptSeq(self,exisSequenceRef):
@@ -240,12 +240,12 @@ class Transcript:
 
     def overlaps(self,*parms):
         numParms=len(parms)
-        if(numParms<1 || numParms>2): raise Exception("1 or 2 parms expected")
+        if(numParms<1 or numParms>2): raise Exception("1 or 2 parms expected")
         if(numParms==2):
             [begin,end]=parms
             return self.begin<end and begin<self.end
         otherTranscript=parms[0]
-        return self.begin<otherTranscript.end and
+        return self.begin<otherTranscript.end and \
             otherTranscript.begin<self.end
 
     def getLength(self):
@@ -341,8 +341,8 @@ class Transcript:
         numExons=len(exons)
         i=0
         while(i<numExons):
-	    thisExon=exons[i]
-	    if(thisExon==victim): break
+            thisExon=exons[i]
+            if(thisExon==victim): break
             i+=1
         if(i>=numExons):
             raise Exception("Can't find exon "+victim+
@@ -356,16 +356,16 @@ class Transcript:
         lastExon=exons[numExons-1]
         strand=self.strand
         if(strand=="+"):
-	    self.begin=firstExon.begin
-	    self.end=lastExon.end
+            self.begin=firstExon.begin
+            self.end=lastExon.end
         else:
-	    self.begin=lastExon.begin
-	    self.end=firstExon.end
+            self.begin=lastExon.begin
+            self.end=firstExon.end
         for utr in self.UTR:
             if(utr.getBegin()<self.begin):
-	        self.begin=utr.getBegin()
+                self.begin=utr.getBegin()
             if(utr.getEnd()>self.end):
-	        self.end=utr.getEnd()
+                self.end=utr.getEnd()
 
     def addExon(self,exon):
         strand=exon.getStrand()
@@ -389,7 +389,7 @@ class Transcript:
         for pair in keyValuePairs:
             (key,value)=pair
             if(key=="gene_id" or key=="transcript_id"): continue
-            extraFields+="$key=$value;"
+            extraFields+=key+"="+value+";"
         exons=self.exons
         numExons=len(exons) if exons else 0
         gff=""
@@ -398,13 +398,13 @@ class Transcript:
         if(begin is not None):
             begin+=1 # convert to 1-based coordinates
             substrate=self.substrate
-            source=$self.source
-            strand=$self.strand
+            source=self.source
+            strand=self.strand
             extra=""
             if(re.search("\S",extraFields)): extra="; "+extraFields
-            gff+=substrate+"\t"+source+"\ttranscript\t"+begin+"\t"+end+
-               "\t.\t"+strand+"\t.\ttranscript_id \""+transID+
-               "\"; gene_id \""+geneID+"\""+extra+"\n";
+            gff+=substrate+"\t"+source+"\ttranscript\t"+begin+"\t"+end+ \
+               "\t.\t"+strand+"\t.\ttranscript_id \""+transID+ \
+               "\"; gene_id \""+geneID+"\""+extra+"\n"
         for exon in exons: gff+=exon.toGff()
         UTR=self.UTR
         for exon in UTR:
@@ -440,7 +440,7 @@ class Transcript:
         return self.strand
 
     def isWellFormed(self,seq):
-        """if($transcript->isWellFormed(\$sequence)) ...
+        """if(transcript.isWellFormed(sequence)) ...
         This procedure iterates through the codons of this transcript,
         starting at the start codon (attribute startCodon specifies this
         offset within the transcript, not counting intron bases), and
@@ -454,9 +454,9 @@ class Transcript:
         exons=self.exons
         numExons=len(exons)
         for i in range(1,numExons):
-	    exon=exons[i]
-	    prevExon=exons[i-1]
-	    if(exon.overlaps(prevExon)): return 0
+            exon=exons[i]
+            prevExon=exons[i-1]
+            if(exon.overlaps(prevExon)): return 0
 
         # 2. Check that there is an in-frame stop-codon
         iterator=CodonIterator(self,seq,stopCodons)
@@ -477,77 +477,77 @@ class Transcript:
         if(not startCodon):
             raise Exception("can't trim UTR, because startCodon is not set")
         for j in(numExons):
-	    exon=self.getIthExon(j)
-	    length=exon.getLength()
-	    if(length<=startCodon):
-	        self.deleteExon(j)
-	        numExons-=1
-	        j-=1
-	        startCodon-=length
-	        self.adjustOrders() ### 4/1/03
-	    else:
-	        if(strand=="+"):
-		    exon.trimInitialPortion(startCodon)
-		    self.begin=exon.begin
-	        else:
-		    exon.trimInitialPortion(startCodon)### ???
-		    self.end=exon.end
-	        exon.type="initial-exon" if numExons>1 else "single-exon"
-	        self.startCodon=0
-	        break
+            exon=self.getIthExon(j)
+            length=exon.getLength()
+            if(length<=startCodon):
+                self.deleteExon(j)
+                numExons-=1
+                j-=1
+                startCodon-=length
+                self.adjustOrders() ### 4/1/03
+            else:
+                if(strand=="+"):
+                    exon.trimInitialPortion(startCodon)
+                    self.begin=exon.begin
+                else:
+                    exon.trimInitialPortion(startCodon)### ???
+                    self.end=exon.end
+                exon.type="initial-exon" if numExons>1 else "single-exon"
+                self.startCodon=0
+                break
         
         # Find in-frame stop codon
         codonIterator=CodonIterator(self,axisSequenceRef,stopCodons)
         stopCodonFound=False
         while(True):
-            codon=codonIterator->nextCodon())
+            codon=codonIterator.nextCodon()
             if(not codon): break
-	    if(stopCodons.get(codon.triplet,None)):
-	        exon=codon.exon
-	        coord=codon.absoluteCoord
-	        trimBases=0
-	        if(strand=="+"): trimBases=exon.end-coord-3
-	        else: trimBases=coord-exon.begin-3
-	        if(trimBases>=0):
-		    exon.trimFinalPortion(trimBases)
-		    exon.type="single-exon" if exon.order==0 else "final-exon"
-		    j=numExons-1
+            if(stopCodons.get(codon.triplet,None)):
+                exon=codon.exon
+                coord=codon.absoluteCoord
+                trimBases=0
+                if(strand=="+"): trimBases=exon.end-coord-3
+                else: trimBases=coord-exon.begin-3
+                if(trimBases>=0):
+                    exon.trimFinalPortion(trimBases)
+                    exon.type="single-exon" if exon.order==0 else "final-exon"
+                    j=numExons-1
                     while(j>exon.order):
-		        self.deleteExon(j)
+                        self.deleteExon(j)
                         j-=1
-		    stopCodonFound=True
-		    break
-	        else: # codon is interrupted; trim the next exon
-		    nextExon=self.getSuccessor(exon)
-		    if(not nextExon):
+                    stopCodonFound=True
+                    break
+                else: # codon is interrupted; trim the next exon
+                    nextExon=self.getSuccessor(exon)
+                    if(not nextExon):
                         raise Exception("exon successor not found")
-		    nextExon.trimFinalPortion(nextExon.getLength()+trimBases)
-		    nextExon.type="final-exon"
-		    j=$numExons-1
+                    nextExon.trimFinalPortion(nextExon.getLength()+trimBases)
+                    nextExon.type="final-exon"
+                    j=numExons-1
                     while(j>nextExon.order):
-		        self.deleteExon(j)
+                        self.deleteExon(j)
                         j-=1
-		    stopCodonFound=True
-		    break	
+                    stopCodonFound=True
+                    break	
         if(not stopCodonFound):
-	    ### sometimes the GFF coords don't include the stop codon...
-	    numExons=self.numExons()
-	    lastExon=self.getIthExon(numExons-1)
-	    lastExonEnd=lastExon.getEnd()
-	    seq=axisSequenceRef
-	    if(strand=="+"):
-	        stopCodonBegin=lastExonEnd
-	        stopCodon=seq[stopCodonBegin:stopCodonBegin+3]
-	        if(stopCodon!="TAG" and stopCodon!="TAA" and stopCodon!="TGA"):
-		    print("Warning!  No stop codon found for",
+            ### sometimes the GFF coords don't include the stop codon...
+            numExons=self.numExons()
+            lastExon=self.getIthExon(numExons-1)
+            lastExonEnd=lastExon.getEnd()
+            seq=axisSequenceRef
+            if(strand=="+"):
+                stopCodonBegin=lastExonEnd
+                stopCodon=seq[stopCodonBegin:stopCodonBegin+3]
+                if(stopCodon!="TAG" and stopCodon!="TAA" and stopCodon!="TGA"):
+                    print("Warning!  No stop codon found for",
                           self.transcriptId,self.strand,
                           "strand , unable to trim UTR")
-	    else: # $strand eq "-"
-	        stopCodonBegin=lastExon.getBegin()-3
-	        stopCodon=seq[stopCodonBegin,stopCodonBegin+3]
-	        stopCodon=Translation.reverseComplement(stopCodon)
-	        if(stopCodon!="TAG" and stopCodon!= "TAA" and stopCodon!="TGA"):
-		    print("Warning!  No stop codon found for",
+            else: # strand="-"
+                stopCodonBegin=lastExon.getBegin()-3
+                stopCodon=seq[stopCodonBegin,stopCodonBegin+3]
+                stopCodon=Translation.reverseComplement(stopCodon)
+                if(stopCodon!="TAG" and stopCodon!= "TAA" and stopCodon!="TGA"):
+                    print("Warning!  No stop codon found for",
                           self.transcriptId,self.strand,
                           "strand , unable to trim UTR")
         self.recomputeBoundaries()
@@ -556,7 +556,7 @@ class Transcript:
         exons=self.exons
         score=0;
         for exon in exons:
-	    exonScore=exon.getScore()
+            exonScore=exon.getScore()
             if(exonScore!="."): score+=exonScore
         return score
 
@@ -565,22 +565,22 @@ class Transcript:
         strand=self.strand
         introns=[]
         lastExonEnd=None
-        for(i in range(numExons)):
-	    exon=self.getIthExon(i)
-	    if(lastExonEnd):
-	        if(strand=="+"):
+        for i in range(numExons):
+            exon=self.getIthExon(i)
+            if(lastExonEnd):
+                if(strand=="+"):
                     introns.append([lastExonEnd,exon.getBegin()])
-	        else:
-	            introns.append([exon.getEnd(),lastExonEnd])
-	    lastExonEnd=exon.getEnd() if strand=="+" else exon.getBegin()
+                else:
+                    introns.append([exon.getEnd(),lastExonEnd])
+            lastExonEnd=exon.getEnd() if strand=="+" else exon.getBegin()
         return introns
 
     def getSuccessor(self,targetExon):
         exons=self.exons
         numExons=len(exons)
         for i in range(numExons-1):
-	    exon=exons[i]
-	    if(exon is targetExon): return exons[i+1]
+            exon=exons[i]
+            if(exon is targetExon): return exons[i+1]
         return None
 
     def setStopCodons(self,stopCodons):
@@ -590,7 +590,7 @@ class Transcript:
         exons=self.exons
         numExons=len(exons)
         if(numExons==1): return exons[0].getType()!="single-exon"
-        return exons[0].getType()!="initial-exon" or
+        return exons[0].getType()!="initial-exon" or \
                exons[numExons-1].getType()!="final-exon"
 
     def getGene(self):
@@ -612,9 +612,9 @@ class Transcript:
             exon=self.getIthExon(i)
             exonLen=exon.getLength()
             if(transcriptCoord<exonLen):
-	        if(self.getStrand()=="+"):
+                if(self.getStrand()=="+"):
                     return exon.getBegin()+transcriptCoord
-	        else: return exon.getEnd()-transcriptCoord-1
+                else: return exon.getEnd()-transcriptCoord-1
             transcriptCoord-=exonLen
         id=self.getID()
         raise Exception("coordinate is beyond transcript end: "+original+
@@ -627,9 +627,9 @@ class Transcript:
         for i in range(numExons):
             exon=exons[i]
             if(exon.containsCoordinate(genomicCoord)):
-	        if(self->getStrand()=="+"):
-	            return transcriptCoord+genomicCoord-exon.getBegin()
-	        else: return transcriptCoord+exon.getEnd()-genomicCoord-1
+                if(self.getStrand()=="+"):
+                    return transcriptCoord+genomicCoord-exon.getBegin()
+                else: return transcriptCoord+exon.getEnd()-genomicCoord-1
             exonLen=exon.getLength()
             transcriptCoord+=exonLen
         return -1
@@ -665,11 +665,11 @@ class Transcript:
             if(i+1<n):
                 nextExon=rawExons[i+1]
                 if(exon.getEnd()==nextExon.getBegin()):
-	            exon.setEnd(nextExon.getEnd())
-	            nextExon=None
+                    exon.setEnd(nextExon.getEnd())
+                    nextExon=None
                     rawExons.pop(i+1)
-	            n-=1
-	            i-=1
+                    n-=1
+                    i-=1
             i+=1
 
         # Sort into transcription order
@@ -727,49 +727,49 @@ class Transcript:
                 begin=exon.getBegin()
                 end=exon.getEnd()
                 if(begin<cdsBegin):
-	            if(end<=cdsBegin):
-	                newExon=exon.copy()
-	                newExon.setType("five_prime_UTR")
-	                UTR.append(newExon)
-	            else:
-	                newExon=exon.copy()
-	                newExon.setEnd(cdsBegin)
-	                newExon.setType("five_prime_UTR")
-	                UTR.append(newExon)
+                    if(end<=cdsBegin):
+                        newExon=exon.copy()
+                        newExon.setType("five_prime_UTR")
+                        UTR.append(newExon)
+                    else:
+                        newExon=exon.copy()
+                        newExon.setEnd(cdsBegin)
+                        newExon.setType("five_prime_UTR")
+                        UTR.append(newExon)
                 if(end>cdsEnd):
-	            if(begin>=cdsEnd):
-	                newExon=exon.copy()
-	                newExon.setType("three_prime_UTR")
-	                UTR.append(newExon)
-	            else:
-	                newExon=exon.copy()
-	                newExon.setBegin(cdsEnd)
-	                newExon.setType("three_prime_UTR")
-	                UTR.append(newExon)
-        else: # strand eq "-"
+                    if(begin>=cdsEnd):
+                        newExon=exon.copy()
+                        newExon.setType("three_prime_UTR")
+                        UTR.append(newExon)
+                    else:
+                        newExon=exon.copy()
+                        newExon.setBegin(cdsEnd)
+                        newExon.setType("three_prime_UTR")
+                        UTR.append(newExon)
+        else: # strand=="-"
             for exon in rawExons:
                 begin=exon.getBegin()
                 end=exon.getEnd()
                 if(begin<cdsBegin):
-	            if(end<=cdsBegin):
-	                newExon=exon.copy()
-	                newExon.setType("three_prime_UTR")
-	                UTR.append(newExon)
-	            else:
+                    if(end<=cdsBegin):
                         newExon=exon.copy()
-	                newExon.setEnd(cdsBegin)
-	                newExon.setType("three_prime_UTR")
-	                UTR.append(newExon)
+                        newExon.setType("three_prime_UTR")
+                        UTR.append(newExon)
+                    else:
+                        newExon=exon.copy()
+                        newExon.setEnd(cdsBegin)
+                        newExon.setType("three_prime_UTR")
+                        UTR.append(newExon)
                 if(end>cdsEnd):
-	            if(begin>=cdsEnd):
-	                newExon=exon.copy()
-	                newExon.setType("five_prime_UTR")
-	                UTR.append(newExon)
-	            else:
-	                newExon=exon.copy()
-	                newExon.setBegin(cdsEnd)
-	                newExon.setType("five_prime_UTR")
-	                UTR.append(newExon)
+                    if(begin>=cdsEnd):
+                        newExon=exon.copy()
+                        newExon.setType("five_prime_UTR")
+                        UTR.append(newExon)
+                    else:
+                        newExon=exon.copy()
+                        newExon.setBegin(cdsEnd)
+                        newExon.setType("five_prime_UTR")
+                        UTR.append(newExon)
         self.UTR=UTR
 
     def getCDSbeginEnd(self):
@@ -779,9 +779,9 @@ class Transcript:
         strand=self.strand
         if(strand=="+"):
             begin=CDS[0].getBegin()
-            end=CDS.[numCDS-1].getEnd()
+            end=CDS[numCDS-1].getEnd()
             return (begin,end)
-        else: # strand eq "-"
+        else: # strand=="-"
             begin=CDS[numCDS-1].getBegin()
             end=CDS[0].getEnd()
             return (begin,end)
@@ -793,8 +793,8 @@ class Transcript:
         combined=[]
         if(exons):
             for exon in exons: combined.append(exon)
-        if($UTR):
-            fore exon in UTR: combined.append(exon)
+        if(UTR):
+            for exon in UTR: combined.append(exon)
         if(raw):
             for exon in raw: combined.append(exon)
         combined.sort(key=lambda exon: exon.begin)
@@ -810,7 +810,6 @@ class Transcript:
                     n-=1
                     i-=1
             i+=1
-        }
         for exon in combined: exon.setType("UTR")
         self.exons=None
         self.rawExons=None

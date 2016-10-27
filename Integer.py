@@ -148,5 +148,5 @@ def testInteger():
     print(x,"%",y,"=",x%y)
     print((x+4-y*2)/x)
     
-testInteger()
+#testInteger()
 
