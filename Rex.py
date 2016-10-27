@@ -24,7 +24,7 @@ class Rex:
         match=None
 
     def find(self,pattern,line):
-        self.match=re.match(pattern,line)
+        self.match=re.search(pattern,line)
         return self.match is not None
 
     def __getitem__(self,index):
@@ -32,13 +32,17 @@ class Rex:
 
 def test_regex():
     rex=Rex()
-    x=y=z=None
-    if(rex.find("abc(\d+)abc(\d+)abc","ab123abc456abc789")):
-        x=rex[1]; y=rex[2]
-    elif(rex.find("dog(\d+)cat(\d+)cow(\d+)chicken(\d+)",
-                  "dog1cat2cow8chicken100")):
-        x=rex[1]; y=rex[4]
-    print(x,y)
+    line="chr1 HAVANA  initial-exon    34384   34457   .       -       0       transcript_id=ENST00000361813.5;gene_id=ENSG00000198952.7;\n"
+    result=rex.find('transcript_id[:=]?\s*"?([^\s";]+)"?',line)
+    #result=rex.find('transcript_id=([^\s";]+)',line)
+    print(result)
+    #x=y=z=None
+    #if(rex.find("abc(\d+)abc(\d+)abc","ab123abc456abc789")):
+    #    x=rex[1]; y=rex[2]
+    #elif(rex.find("dog(\d+)cat(\d+)cow(\d+)chicken(\d+)",
+    #              "dog1cat2cow8chicken100")):
+    #    x=rex[1]; y=rex[4]
+    #print(x,y)
 
 
 
