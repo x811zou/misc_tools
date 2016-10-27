@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 #=========================================================================
 # This is OPEN SOURCE SOFTWARE governed by the Gnu General Public
 # License (GPL) version 3, as described at www.opensource.org.
