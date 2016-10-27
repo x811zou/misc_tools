@@ -17,5 +17,6 @@ parser=EssexParser(filename)
 while(True):
     root=parser.nextElem()
     if(not root): break
-    root.printXML(sys.stdout)
-    print("\n")
+    #root.printXML(sys.stdout); print("\n")
+    elem=root.pathQuery("reference-transcript/variants")
+    if(elem): elem.printXML(sys.stdout); print("\n")

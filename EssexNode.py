@@ -16,7 +16,7 @@ import re
 # These parse trees are produced by the EssexParser.  Literals (such as
 # numbers and strings---i.e., the actual data) are not allocated an
 # EssexNode; an EssexNode represents a parenthesized expression only.
-# You can test whether something is a EssexNode via isaNode(), below.
+# You can test whether something is an EssexNode via isaNode(), below.
 #
 # Attributes:
 #   tag : string
