@@ -10,7 +10,9 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 from Exon import Exon
 from Translation import Translation
 from CodonIterator import CodonIterator
+from EssexNode import EssexNode
 import copy
+import re
 
 ######################################################################
 # bmajoros@duke.com 10/15/2016
@@ -113,12 +115,14 @@ class Transcript:
                     "final-exon":1}
 
     def __init__(self,id,strand=None):
-        if(type(id)!="EssexNode"): # not an EssexNode
+        if(type(id)!=EssexNode): # not an EssexNode
             self.transcriptId=id
             self.strand=strand
             self.exons=[]
             self.UTR=[]
+            self.rawExons=None
             self.stopCodons={"TAG":1,"TGA":1,"TAA":1}
+            self.startCodon=None
         else: # EssexNode
             essex=id
             self.transcriptId=essex.getAttribute("ID")
@@ -130,6 +134,8 @@ class Transcript:
             self.substrate=essex.getAttribute("substrate")
             self.exons=[]
             self.UTR=[]
+            self.rawExons=None
+            self.startCodon=None
             self.stopCodons={"TAG":1,"TGA":1,"TAA":1}
             exons=self.exons
             UTR=self.UTR
@@ -280,7 +286,8 @@ class Transcript:
         rev=self.strand=="+"
         self.exons.sort(key=lambda exon: exon.begin,reverse=rev)
         self.UTR.sort(key=lambda exon: exon.begin,reverse=rev)
-        self.rawExons=sort(key=lambda exon:exon.begin,reverse=rev)
+        if(self.rawExons):
+            self.rawExons.sort(key=lambda exon:exon.begin,reverse=rev)
 
     def adjustOrders(self):
         exons=self.exons
@@ -401,9 +408,9 @@ class Transcript:
             strand=self.strand
             extra=""
             if(re.search("\S",extraFields)): extra="; "+extraFields
-            gff+=substrate+"\t"+source+"\ttranscript\t"+begin+"\t"+end+ \
-               "\t.\t"+strand+"\t.\ttranscript_id \""+transID+ \
-               "\"; gene_id \""+geneID+"\""+extra+"\n"
+            gff+=substrate+"\t"+source+"\ttranscript\t"+str(begin)+"\t" \
+                  +str(end)+"\t.\t"+strand+"\t.\ttranscript_id \""+transID+ \
+                  "\"; gene_id \""+geneID+"\""+extra+"\n"
         for exon in exons: gff+=exon.toGff()
         UTR=self.UTR
         for exon in UTR:

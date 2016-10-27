@@ -117,7 +117,7 @@ class GffTranscriptReader:
     def setStopCodons(self,stopCodons):
         self.stopCodons=stopCodons
 
-    def adjustStartCodons_fw(self,transcript):
+    def adjustStartCodons_fw(self,transcript,totalIntronSize):
         startCodon=None
         exons=transcript.exons
         exons.sort(key=lambda exon: exon.begin)
@@ -133,7 +133,7 @@ class GffTranscriptReader:
             startCodon=0
             transcript.startCodon=transcript.begin
             transcript.startCodonAbsolute=transcript.begin
-        for i in range(numExons): exon.order=i
+        for i in range(numExons): exons[i].order=i
         for i in range(numExons):
             exon=exons[i]
             if(i>0):
@@ -144,7 +144,7 @@ class GffTranscriptReader:
                self.exonContainsPoint(exon,transcript.startCodon)): break
         return startCodon
 
-    def adjustStartCodons_bw(self,transcript):
+    def adjustStartCodons_bw(self,transcript,totalIntronSize):
         startCodon=None
         exons=transcript.exons
         exons.sort(key=lambda exon: exon.begin,reverse=True)
@@ -175,13 +175,13 @@ class GffTranscriptReader:
             transcript.adjustOrders()
             strand=transcript.strand
             startCodon=None
-            totalIntronSize=0
+            totalIntronSize=Integer(0)
             if(strand=="+"):
-                startCodon=self.adjustStartCodons_fw(transcript)
+                startCodon=self.adjustStartCodons_fw(transcript,totalIntronSize)
             else:
-                startCodon=self.adjustStartCodons_bw(transcript)
+                startCodon=self.adjustStartCodons_bw(transcript,totalIntronSize)
             if(startCodon is not None):
-                startCodon-=totalIntronSize
+                startCodon-=int(totalIntronSize)
                 transcript.startCodon=startCodon
 
     def loadGFF_transcript(self,fields,line,transcriptBeginEnd,GFF,
@@ -374,39 +374,40 @@ class GffTranscriptReader:
         transcripts={}
         genes={}
         readOrder=Integer(1)
-        GFF=open(gffFilename,"rt")
+        GFF=open(gffFilename,"r")
         transcriptBeginEnd={}
         while(True):
             line=GFF.readline()
-            #print("LINE="+line)
-            if(line is None): break
+            print("LINE="+line)
+            if(not line): break
             if(not re.search("\S+",line)): continue
             if(re.search("^\s*\#",line)): continue
             fields=line.split()
             if(len(fields)<8): raise Exception("can't parse GTF:"+line)
             if(fields[2]=="transcript"):
-                #print("loading transcript line")
+                print("loading transcript line")
                 self.loadGFF_transcript(fields,line,transcriptBeginEnd,GFF,
                                    transcripts,readOrder,genes)
             elif("UTR" in fields[2] or "utr" in fields[2]):
-                #print("loading UTR")
+                print("loading UTR")
                 self.loadGFF_UTR(fields,line,transcriptBeginEnd,GFF,
                             transcripts,readOrder,genes)
             elif(fields[2]=="exon"):
-                #print("loading exon")
+                print("loading exon")
                 self.loadGFF_exon(fields,line,transcriptBeginEnd,GFF,
                              transcripts,readOrder,genes)
             elif("CDS" in fields[2] or "-exon" in fields[2]):
-                #print("loading CDS")
+                print("loading CDS")
                 self.loadGFF_CDS(fields,line,transcriptBeginEnd,GFF,
                             transcripts,readOrder,genes)
-        close(GFF);
+        GFF.close()
         transcripts=list(transcripts.values())
         for transcript in  transcripts: transcript.parseRawExons()
-        adjustStartCodons(self,transcripts)
-        computeFrames(self,transcripts);
+        self.adjustStartCodons(transcripts)
+        self.computeFrames(transcripts);
         if(self.shouldSortTranscripts):
-            transcripts.sort(key=lambda t: t.substrate+str(t.begin))
+            transcripts.sort(key=lambda t: t.substrate+" "+str(t.begin)+" "+
+                             str(t.end))
         else:
             transcripts.sort(key=lambda t: t.readOrder)
         return transcripts

@@ -128,7 +128,7 @@ class Exon:
 
     def getFrame(self):
         frame=self.frame
-        return frame if frame else "."
+        return frame if frame is not None else "."
 
     def getType(self):
         return self.type
@@ -147,9 +147,10 @@ class Exon:
         score=self.getScore()
         transcriptId=transcript.getID() if transcript else "."
         geneId=transcript.getGeneId() if transcript else "."
-        return "\t".join(substrate,source,type,begin,end,score,strand,frame,
-                         "transcript_id \""+transcriptId+"\"; gene_id \""+
-                         geneId+"\"\n")
+        return "\t".join([substrate,source,type,str(begin),str(end),score,
+                          strand,str(frame),
+                          "transcript_id \""+transcriptId+"\"; gene_id \""+
+                          geneId+"\"\n"])
 
     def setScore(self,score):
         self.score=score
@@ -177,7 +178,7 @@ class Exon:
         self.strand=strand
 
     def getSubstrate(self):
-        substrate=self.substrate
+        substrate=self.substrate if hasattr(self,'substrate') else None
         if(substrate): return substrate
         return self.transcript.getSubstrate()
 
