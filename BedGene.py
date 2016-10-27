@@ -23,7 +23,7 @@ from Interval import Interval
 #   gene.addCDS(Interval(begin,end))
 #   gene.addUTR(Interval(begin,end))
 #   gene.addExon(Interval(begin,end))
-#   gene.coalesce() # combines UTR and CDS elements into exons
+#   gene.coalesce() # combines UTR and CDS elements into exons; sorts by coord
 # Class Methods:
 #=========================================================================
 class BedGene:
@@ -86,3 +86,4 @@ class BedGene:
                     added=True
                     break
             if(not added): exons.append(utr)
+        exons.sort(key=lambda exon: exon.begin)

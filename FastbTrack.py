@@ -35,6 +35,7 @@ from Interval import Interval
 #   bool=track.isContinuous()
 #   track.save(FILEHANDLE)
 #   array=track.getNonzeroRegions() # returns array of Interval
+#   bool=track.anyZeroValues() # only for continuous tracks
 #   array=track.getContiguousRegions() # returns an array of Interval with 
 #      "value" attribute added
 #   newTrack=track.slice(begin,end) # [begin,end) => end not inclusive
@@ -143,4 +144,9 @@ class FastbTrack:
         mean=sum/L
         return mean
 
+    def anyZeroValues(self):
+        data=self.data
+        for x in data:
+            if(x==0.0): return True
+        return False
 
