@@ -52,6 +52,8 @@ class GffTranscriptReader:
         genes=set()
         for transcript in transcripts:
             gene=transcript.getGene()
+            if(not gene):
+                raise Exception("transcript "+transcript.getID()+" has no gene")
             genes.add(gene)
         genes=list(genes)
         genes.sort(key=lambda gene: gene.getBegin())
@@ -216,6 +218,7 @@ class GffTranscriptReader:
             gene=genes.get(geneId,None)
             if(not gene): genes[geneId]=gene=Gene(); gene.setId(geneId)
             transcript.setGene(gene)
+            gene.addTranscript(transcript)
             transcript.extraFields=transcriptExtraFields
                            
     def loadGFF_UTR(self,fields,line,transcriptBeginEnd,GFF,
@@ -280,7 +283,7 @@ class GffTranscriptReader:
         transcriptId=None
         rex=Rex()
         if(rex.find("transgrp[:=]\s*(\S+)",line)): transcriptId=rex[1]
-        elif(rex.find('transcript_id[:=]?\s*"?([^\s";]+)"?'),line):
+        elif(rex.find('transcript_id[:=]?\s*"?([^\s";]+)"?',line)):
             transcriptId=rex[1]
         elif(rex.find('Parent=([^;,\s]+)',line)): transcriptId=rex[1]
         geneId=None
@@ -288,8 +291,8 @@ class GffTranscriptReader:
         elif(rex.find('gene_id[:=]?\s*"?([^\s\;"]+)"?',line)): geneId=rex[1]
         if(transcriptId is None): transcriptId=geneId
         if(geneId is None): geneId=transcriptId
-        if(rex.find("(\S+);$"),transcriptId): transcriptId=rex[1]
-        if(rex.find("(\S+);$"),geneId): geneId=rex[1]
+        if(rex.find("(\S+);$",transcriptId)): transcriptId=rex[1]
+        if(rex.find("(\S+);$",geneId)): geneId=rex[1]
         extra=""
         for i in range(8,len(fields)): extra+=fields[i]+" "
         if(exonBegin>exonEnd): (exonBegin,exonEnd)=(exonEnd,exonBegin)
@@ -315,6 +318,7 @@ class GffTranscriptReader:
         exon.extraFields=extra
         exon.score=exonScore
         exon.type=fields[2]
+        if(transcript.rawExons is None): transcript.rawExons=[]
         transcript.rawExons.append(exon)
         gene.addTranscript(transcript)
         
@@ -378,26 +382,26 @@ class GffTranscriptReader:
         transcriptBeginEnd={}
         while(True):
             line=GFF.readline()
-            print("LINE="+line)
+            #print("LINE="+line)
             if(not line): break
             if(not re.search("\S+",line)): continue
             if(re.search("^\s*\#",line)): continue
             fields=line.split()
             if(len(fields)<8): raise Exception("can't parse GTF:"+line)
             if(fields[2]=="transcript"):
-                print("loading transcript line")
+                #print("loading transcript line")
                 self.loadGFF_transcript(fields,line,transcriptBeginEnd,GFF,
                                    transcripts,readOrder,genes)
             elif("UTR" in fields[2] or "utr" in fields[2]):
-                print("loading UTR")
+                #print("loading UTR")
                 self.loadGFF_UTR(fields,line,transcriptBeginEnd,GFF,
                             transcripts,readOrder,genes)
             elif(fields[2]=="exon"):
-                print("loading exon")
+                #print("loading exon: "+line)
                 self.loadGFF_exon(fields,line,transcriptBeginEnd,GFF,
                              transcripts,readOrder,genes)
             elif("CDS" in fields[2] or "-exon" in fields[2]):
-                print("loading CDS")
+                #print("loading CDS")
                 self.loadGFF_CDS(fields,line,transcriptBeginEnd,GFF,
                             transcripts,readOrder,genes)
         GFF.close()

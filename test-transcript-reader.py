@@ -14,12 +14,43 @@ from GffTranscriptReader import GffTranscriptReader
 
 #filename="/home/bmajoros/1000G/assembly/local-genes.gff"
 #filename="/home/bmajoros/1000G/assembly/tmp.gff"
-filename="test/data/tmp.gff"
+#filename="test/data/tmp.gff"
+filename="test/data/local-genes.gff"
 
 reader=GffTranscriptReader()
-transcripts=reader.loadGFF(filename)
-for transcript in transcripts:
+#transcripts=reader.loadGFF(filename)
+#for transcript in transcripts:
     #print(transcript.getID())
-    gff=transcript.toGff()
-    print(gff)
+    #gff=transcript.toGff()
+    #print(gff)
+   
+#genes=reader.loadGenes(filename)
+#for gene in genes:
+#    print("gene",gene.getID())
+#    n=gene.getNumTranscripts()
+#    for i in range(n):
+#        transcript=gene.getIthTranscript(i)
+#        transID=transcript.getID()
+#        print("\t"+transID+"\t"+str(transcript.getBegin())+"\t"
+#              +str(transcript.getEnd()))
+
+#hashTable=reader.hashBySubstrate(filename)
+#keys=hashTable.keys()
+#for key in keys:
+#    print(key)
+
+#hashTable=reader.hashGenesBySubstrate(filename)
+#keys=hashTable.keys()
+#for key in keys:
+#    print(key)
+
+#hashTable=reader.loadTranscriptIdHash(filename)
+#keys=hashTable.keys()
+#for key in keys:
+#    print(key)
+
+hashTable=reader.loadGeneIdHash(filename)
+keys=hashTable.keys()
+for key in keys:
+    print(key)
 

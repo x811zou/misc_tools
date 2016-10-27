@@ -328,8 +328,8 @@ class Transcript:
             return
         self.sortExons()
         (CDSbegin,CDSend)=self.getCDSbeginEnd()
-        if(self.utr is None): self.utr=[]
-        UTR=self.utr
+        if(self.UTR is None): self.UTR=[]
+        UTR=self.UTR
         strand=self.getStrand()
         if(strand=="+"):
             for utr in UTR:
@@ -426,6 +426,9 @@ class Transcript:
 
     def setGeneId(self,id):
         self.geneId=id
+
+    def getId(self):
+        return self.transcriptId
 
     def getID(self):
         return self.transcriptId

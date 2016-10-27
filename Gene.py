@@ -48,9 +48,13 @@ class Gene:
 
     def getBegin(self):
         transcripts=self.transcripts
+        if(not transcripts):
+            raise Exception("no transcripts in gene "+self.getID())
         begin=None
         for transcript in transcripts:
             b=transcript.getBegin()
+            if(b is None):
+                raise Exception("transcript has no begin: "+transcript.getID())
             if(begin is None or b<begin): begin=b
         return begin
 
@@ -88,6 +92,9 @@ class Gene:
         return longest
 
     def getId(self):
+        return self.ID
+
+    def getID(self):
         return self.ID
 
     def setId(self,id):
