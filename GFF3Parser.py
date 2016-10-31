@@ -34,9 +34,34 @@ class GFF3Parser:
     def loadStructure(self,filename):
         records=self.loadRecords(filename)
         idHash={}
-        hashRecordsByID(records,idHash)
+        self.hashRecordsByID(records,idHash)
+        self.connectParentsChildren(records,idHash)
+        roots=self.findRoots(records)
+        for root in roots:
+            print(root["type"])
+            
+    def findRoots(self,records):
+        roots=[]
+        for record in records:
+            if(record.get("children",None) is not None):
+                roots.append(record)
+        return roots
 
-    def hashRecordsByID(records,hash):
+    def addChild(self,parent,child):
+        if(parent.get("children",None) is None): parent["children"]=[]
+        parent["children"].append(child)
+        child["parent"]=parent
+        
+    def connectParentsChildren(self,records,idHash):
+        for record in records:
+            parent=record["extra"].get("Parent",None)
+            if(parent is not None):
+                parentRec=idHash.get(parent,None)
+                if(parentRec is None):
+                    raise Exception("Cannot find GFF3 parent "+parent)
+                self.addChild(parentRec,record)
+
+    def hashRecordsByID(self,records,hash):
         for record in records:
             extraHash=record["extra"]
             ID=extraHash.get("ID",None)
@@ -81,7 +106,7 @@ class GFF3Parser:
         
 def test_parser(filename):
     parser=GFF3Parser()
-    records=parser.loadBasic(filename)
+    records=parser.loadStructure(filename)
 
-test_parser("/Users/bmajoros/python/test/data/gencode.v19.annotation.gff3")
+test_parser("/Users/bmajoros/python/test/data/subset.gff3")
 
