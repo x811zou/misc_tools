@@ -11,6 +11,7 @@ from Exon import Exon
 from Translation import Translation
 from CodonIterator import CodonIterator
 from EssexNode import EssexNode
+from Interval import Interval
 import copy
 import re
 
@@ -37,20 +38,24 @@ import re
 #   gene : a Gene object to which this transcript belongs
 #   extraFields : a string of extra fields from the end of the GFF line
 # Methods:
-#   transcript=Transcript(id,strand)
+#   transcript=Transcript(id,strand) =TESTED
 #   transcript=Transcript(essexNode);
 #   rawExons=transcript.getRawExons() # includes UTR (possibly coalesced)
-#   transcript.addExon(exon)
-#   copy=transcript.copy()
-#   bool=transcript.areExonTypesSet()
+#     =TESTED
+#   transcript.addExon(exon) =TESTED
+#   transcript.addUTR(exon) =TESTED
+#   copy=transcript.copy() =TESTED
+#   bool=transcript.areExonTypesSet() =TESTED
 #   transcript.setExonTypes() # initial-exon, internal-exon, etc...
+#      =TESTED
 #   transcript.setUTRtypes() # this is called by setExonTypes()
-#   transcript.setExonTypes("exon")
+#      =TESTED
+#   transcript.setExonTypes("exon") =TESTED
 #   success=transcript.loadExonSequences(axisSequence)
 #   seq=transcript.loadTranscriptSeq(axisSequence)
-#   bool=transcript.equals(other)
-#   bool=transcript.overlaps(otherTranscript)
-#   bool=transcript.overlaps(begin,end)
+#   bool=transcript.equals(other) =TESTED
+#   bool=transcript.overlaps(otherTranscript) =TESTED
+#   bool=transcript.overlaps(begin,end) =TESTED
 #   bool=transcript.isPartial()
 #   bool=transcript.isContainedWithin(begin,end)
 #   bool=transcript.contains(begin,end)
@@ -59,51 +64,53 @@ import re
 #   len=transcript.getExtent() # end-begin
 #   (begin,end)=transcript.getCDSbeginEnd() # call sortExons() first!
 #                 ^ begin is always < end
-#   n=transcript.numExons()
-#   exon=transcript.getIthExon(i)
-#   n=transcript.numUTR()
-#   utr=transcript.getIthUTR(i)
+#   n=transcript.numExons() =TESTED
+#   n=transcript.getNumExons() =TESTED
+#   exon=transcript.getIthExon(i) =TESTED
+#   n=transcript.numUTR() =TESTED
+#   utr=transcript.getIthUTR(i) =TESTED
 #   len=transcript.totalUTRlen()
 #   transcript.deleteExon(index)
 #   transcript.deleteExonRef(exon)
 #   transcript.recomputeBoundaries() # for after trimming 1st & last exons
-#   transcript.getSubstrate()
-#   transcript.getSource()
+#   transcript.getSubstrate() =TESTED
+#   transcript.getSource() =TESTED
 #   gff=transcript.toGff()
-#   id=transcript.getID()
-#   id=transcript.getTranscriptId()
-#   id=transcript.getGeneId()
-#   transcript.setGeneId(id)
-#   transcript.setTranscriptId(id)
-#   transcript.setSubstrate(substrate)
-#   transcript.setSource(source)
-#   begin=transcript.getBegin()
-#   end=transcript.getEnd()
-#   transcript.setBegin(x)
-#   transcript.setEnd(x)
-#   strand=transcript.getStrand()
-#   transcript.setStrand(strand)
+#   id=transcript.getID() =TESTED
+#   id=transcript.getId() =TESTED
+#   id=transcript.getTranscriptId() =TESTED
+#   id=transcript.getGeneId() =TESTED
+#   transcript.setGeneId(id) =TESTED
+#   transcript.setTranscriptId(id) =TESTED
+#   transcript.setSubstrate(substrate) =TESTED
+#   transcript.setSource(source) =TESTED
+#   begin=transcript.getBegin() =TESTED
+#   end=transcript.getEnd() =TESTED
+#   transcript.setBegin(x) =TESTED
+#   transcript.setEnd(x) =TESTED
+#   strand=transcript.getStrand() =TESTED
+#   transcript.setStrand(strand) =TESTED
 #   if(transcript.isWellFormed(sequence)): ...   # See notes in the sub
 #   transcript.trimUTR()
-#   transcript.getScore()
-#   introns=transcript.getIntrons()
+#   transcript.getScore() =TESTED
+#   introns=transcript.getIntrons() =TESTED
 #   nextExon=transcript.getSuccessor(thisExon)
-#   transcript.shiftCoords(delta)
+#   transcript.shiftCoords(delta) =TESTED
 #   transcript.reverseComplement(seqLen)
 #   transcript.setStopCodons({"TGA":1,"TAA":1,"TAG":1})
-#   g=transcript.getGene()
+#   g=transcript.getGene() =TESTED
 #   transcript.setGene(g)
 #   genomicCoord=transcript.mapToGenome(transcriptCoord)
 #   transcriptCoord=transcript.mapToTranscript(genomicCoord)
 #   exon=transcript.getExonContaining(genomicCoord)
-#   array=transcript.getSpliceSites()
 #   array=transcript.parseExtraFields() # array of [key,value] pairs
 #   hash=transcript.hashExtraFields(keyValuePairs)
 #   transcript.setExtraFieldsFromKeyValuePairs(array); # [key,value]
 #   transcript.setExtraFields(string)
-#   transcript.parseRawExons() # infers UTR elements from exons (CDS) and
-#                                rawExons
+#   transcript.parseRawExons() # infers UTR elements from CDS and rawExons
+#     =TESTED
 #   transcript.becomeNoncoding() # enforces all exons to be UTR
+#     =TESTED
 # Private methods:
 #   transcript.adjustOrders()
 #   transcript.sortExons()
@@ -123,6 +130,7 @@ class Transcript:
             self.rawExons=None
             self.stopCodons={"TAG":1,"TGA":1,"TAA":1}
             self.startCodon=None
+            self.extraFields=None
         else: # EssexNode
             essex=id
             self.transcriptId=essex.getAttribute("ID")
@@ -166,7 +174,7 @@ class Transcript:
         n=self.numExons()
         m=other.numExons()
         if(n!=m): return 0
-        for i in range(0,m):
+        for i in range(m):
             thisExon=self.getIthExon(i)
             thatExon=other.getIthExon(i)
             if(thisExon.getBegin()!=thatExon.getBegin()): return False
@@ -262,6 +270,9 @@ class Transcript:
     def getExtent(self):
         return self.end-self.begin
 
+    def getNumExons(self):
+        return len(self.exons)
+
     def numExons(self):
         return len(self.exons)
 
@@ -283,7 +294,7 @@ class Transcript:
         self.adjustOrders()
 
     def sortExons(self):
-        rev=self.strand=="+"
+        rev=self.strand=="-"
         self.exons.sort(key=lambda exon: exon.begin,reverse=rev)
         self.UTR.sort(key=lambda exon: exon.begin,reverse=rev)
         if(self.rawExons):
@@ -291,6 +302,11 @@ class Transcript:
 
     def adjustOrders(self):
         exons=self.exons
+        numExons=len(exons)
+        if(numExons==0): return
+        for i in range(numExons):
+            exons[i].order=i
+        exons=self.UTR
         numExons=len(exons)
         if(numExons==0): return
         for i in range(numExons):
@@ -307,6 +323,7 @@ class Transcript:
         self.setUTRtypes()
         exons=self.exons
         numExons=len(exons)
+        if(numExons==0): return
         if(defaultType):
             for exon in exons: exon.setType(defaultType)
             return
@@ -317,7 +334,7 @@ class Transcript:
         else:
             for exon in exons:
                 if(not Transcript.validExonTypes.get(exon.getType(),None)):
-                    exon.setType("interal-exon")
+                    exon.setType("internal-exon")
             exons[0].setType("initial-exon")
             exons[numExons-1].setType("final-exon")
 
@@ -379,6 +396,22 @@ class Transcript:
         exons.append(exon)
         rev=strand=="-"
         exons.sort(key=lambda exon: exon.begin,reverse=strand=="-")
+        self.adjustOrders()
+
+    def addRawExon(self,exon):
+        strand=exon.getStrand()
+        if(self.rawExons is None): self.rawExons=[]
+        exons=self.rawExons
+        exons.append(exon)
+        rev=strand=="-"
+        exons.sort(key=lambda exon: exon.begin,reverse=strand=="-")
+
+    def addUTR(self,exon):
+        strand=exon.getStrand()
+        UTR=self.UTR
+        UTR.append(exon)
+        rev=strand=="-"
+        UTR.sort(key=lambda exon: exon.begin,reverse=strand=="-")
         self.adjustOrders()
 
     def getSubstrate(self):
@@ -570,17 +603,17 @@ class Transcript:
         return score
 
     def getIntrons(self):
-        numExons=self.numExons()
+        exons=self.getRawExons()
+        numExons=len(exons)
         strand=self.strand
         introns=[]
         lastExonEnd=None
-        for i in range(numExons):
-            exon=self.getIthExon(i)
+        for exon in exons:
             if(lastExonEnd):
                 if(strand=="+"):
-                    introns.append([lastExonEnd,exon.getBegin()])
+                    introns.append(Interval(lastExonEnd,exon.getBegin()))
                 else:
-                    introns.append([exon.getEnd(),lastExonEnd])
+                    introns.append(Interval(exon.getEnd(),lastExonEnd))
             lastExonEnd=exon.getEnd() if strand=="+" else exon.getBegin()
         return introns
 
@@ -728,7 +761,8 @@ class Transcript:
         self.sortExons() # also sorts rawExons
         (cdsBegin,cdsEnd)=self.getCDSbeginEnd()
         if(cdsBegin<0): # noncoding gene
-            if(CDS is None or len(CDS)==0): self.exons=rawExons
+            #if(CDS is None or len(CDS)==0): self.exons=rawExons # ???
+            if(CDS is None or len(CDS)==0): self.UTR=rawExons
             return
         UTR=[]
         if(strand=="+"):
@@ -820,6 +854,6 @@ class Transcript:
                     i-=1
             i+=1
         for exon in combined: exon.setType("UTR")
-        self.exons=None
+        self.exons=[]
         self.rawExons=None
         self.UTR=combined

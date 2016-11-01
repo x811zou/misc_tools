@@ -19,9 +19,11 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #   gene=Gene()
 #   gene.addTranscript(t)
 #   n=gene.getNumTranscripts()
+#   n=gene.numTranscripts()
 #   t=gene.getIthTranscript(i)
 #   t=gene.longestTranscript()
 #   id=gene.getId()
+#   id=gene.getID()
 #   gene.setId(id)
 #   begin=gene.getBegin() # leftmost edge
 #   end=gene.getEnd()     # rightmost edge
@@ -74,6 +76,9 @@ class Gene:
         hash[id]=transcript
 
     def getNumTranscripts(self):
+        return len(self.transcripts)
+
+    def numTranscripts(self):
         return len(self.transcripts)
 
     def getIthTranscript(self,i):

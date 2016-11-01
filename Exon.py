@@ -75,6 +75,8 @@ class Exon:
         self.score="."
         self.type="exon"
         self.strand=transcript.getStrand() if transcript else None
+        self.order=None
+        self.frame=None
 
     def setBegin(self,begin):
         self.begin=begin
