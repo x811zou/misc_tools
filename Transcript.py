@@ -218,7 +218,7 @@ class Transcript:
         self.end+=delta
 
     def loadExonSequences(self,axisSequenceRef):
-        exons=self.exons
+        exons=self.getRawExons()
         numExons=len(exons)
         strand=self.strand
         for i in range(numExons):
@@ -236,7 +236,7 @@ class Transcript:
         return True
 
     def loadTranscriptSeq(self,exisSequenceRef):
-        exons=self.exons
+        exons=self.getRawExons()
         numExons=len(exons)
         firstExon=exons[0]
         self.loadExonSequences(axisSequenceRef)

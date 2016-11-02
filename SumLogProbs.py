@@ -49,8 +49,8 @@ def sumLogProbs(x):
     return largestValue+math.log(sum)
 
 
-v=[math.log(0.0001),math.log(0.0002),math.log(0.0003)]
-print(math.exp(sumLogProbs2(math.log(0.1),math.log(0.2))))
-print(math.exp(sumLogProbs(v)))
+#v=[math.log(0.0001),math.log(0.0002),math.log(0.0003)]
+#print(math.exp(sumLogProbs2(math.log(0.1),math.log(0.2))))
+#print(math.exp(sumLogProbs(v)))
 
 

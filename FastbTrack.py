@@ -34,6 +34,7 @@ from Interval import Interval
 #   bool=track.isContinuous()
 #   track.save(FILEHANDLE)
 #   array=track.getNonzeroRegions() # returns array of Interval
+#   array=track.getZeroRegions() # returns array of Interval
 #   bool=track.anyZeroValues() # only for continuous tracks
 #   array=track.getContiguousRegions() # returns an array of Interval with 
 #      "value" attribute added
@@ -97,8 +98,24 @@ class FastbTrack:
         intervals.append(interval)
         return intervals
 
-    def getNonzeroRegions(self):
+    def getZeroRegions(self):
         """getNonzeroRegions() returns array of Intervals"""
+        data=self.data
+        if(self.isDiscrete()): raise Exception("track is not continuous")
+        L=len(data)
+        intervals=[]
+        begin=None
+        for i in range(L):
+            x=data[i]
+            if(x==0 and (i==0 or data[i-1]!=0)): begin=i
+            elif(x!=0 and i>0 and data[i-1]==0):
+                intervals.append(Interval(begin,i))
+        if(L>0 and data[L-1]==0):
+            intervals.append(Interval(begin,L))
+        return intervals
+
+    def getNonzeroRegions(self):
+        """getZeroRegions() returns array of Intervals"""
         data=self.data
         if(self.isDiscrete()): raise Exception("track is not continuous")
         L=len(data)
@@ -106,10 +123,10 @@ class FastbTrack:
         begin=None
         for i in range(0,L):
             x=data[i]
-            if(x>0 and (i==0 or data[i-1]==0)): begin=i
-            elif(x==0 and i>0 and data[i-1]>0):
+            if(x!=0 and (i==0 or data[i-1]==0)): begin=i
+            elif(x==0 and i>0 and data[i-1]!=0):
                 intervals.append(Interval(begin,i))
-        if(L>0 and data[L-1]>0):
+        if(L>0 and data[L-1]!=0):
             intervals.append(Interval(begin,L))
         return intervals
 
