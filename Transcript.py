@@ -51,7 +51,7 @@ import re
 #   transcript.setUTRtypes() # this is called by setExonTypes()
 #      =TESTED
 #   transcript.setExonTypes("exon") =TESTED
-#   success=transcript.loadExonSequences(axisSequence)
+#   success=transcript.loadExonSequences(axisSequence,exons)
 #   seq=transcript.loadTranscriptSeq(axisSequence)
 #   bool=transcript.equals(other) =TESTED
 #   bool=transcript.overlaps(otherTranscript) =TESTED
@@ -144,6 +144,7 @@ class Transcript:
             self.UTR=[]
             self.rawExons=None
             self.startCodon=None
+            self.extraFields=None
             self.stopCodons={"TAG":1,"TGA":1,"TAA":1}
             exons=self.exons
             UTR=self.UTR
@@ -217,8 +218,7 @@ class Transcript:
         self.begin+=delta
         self.end+=delta
 
-    def loadExonSequences(self,axisSequenceRef):
-        exons=self.getRawExons()
+    def loadExonSequences(self,axisSequenceRef,exons):
         numExons=len(exons)
         strand=self.strand
         for i in range(numExons):
@@ -235,11 +235,11 @@ class Transcript:
             exon.sequence=exonSeq
         return True
 
-    def loadTranscriptSeq(self,exisSequenceRef):
+    def loadTranscriptSeq(self,axisSequenceRef):
         exons=self.getRawExons()
         numExons=len(exons)
         firstExon=exons[0]
-        self.loadExonSequences(axisSequenceRef)
+        self.loadExonSequences(axisSequenceRef,exons)
         sequence=""
         for exon in exons: sequence+=exon.sequence
         self.sequence=sequence
@@ -435,6 +435,7 @@ class Transcript:
         begin=self.begin
         end=self.end
         if(begin is not None):
+            begin=int(begin)
             begin+=1 # convert to 1-based coordinates
             substrate=self.substrate
             source=self.source
@@ -691,25 +692,38 @@ class Transcript:
         for exon in exons: exon.setStrand(strand)
 
     def getRawExons(self):
-        exons=self.exons
-        UTR=self.UTR
-        rawExons=[]
-        for exon in exons: rawExons.append(exon.copy())
-        for utr in UTR: rawExons.append(utr.copy())
+        #print("getRawExons",self.getID())
+        rawExons=self.rawExons
+        if(not rawExons or len(rawExons)==0):
+            exons=self.exons
+            UTR=self.UTR
+            rawExons=[]
+            for exon in exons: 
+                #print("exon",exon.getLength())
+                if(exon.getLength()>0): rawExons.append(exon.copy())
+            for utr in UTR: 
+                #print("UTR",utr.getLength())
+                if(utr.getLength()>0): rawExons.append(utr.copy())
         # Sort into chromosome order (temporarily):
         rawExons.sort(key=lambda exon: exon.begin)
         # Now coalesce any UTR-exon pairs that are adjacent:
         n=len(rawExons)
+        #print(n,"exons")
         i=0
         while(i<n):
             exon=rawExons[i]
+            #print("exon",i,exon.getBegin(),exon.getEnd())
             exon.setType("exon")
             if(i+1<n):
                 nextExon=rawExons[i+1]
-                if(exon.getEnd()==nextExon.getBegin()):
+                #print("next exon",i+1,nextExon.getBegin(),nextExon.getEnd())
+                if(exon.getEnd()==nextExon.getBegin() or
+                   exon.getEnd()==nextExon.getBegin()-1):
                     exon.setEnd(nextExon.getEnd())
                     nextExon=None
+                    #print("deleting exon",i+1,"count="+str(len(rawExons)))
                     rawExons.pop(i+1)
+                    #print("now count="+str(len(rawExons)))
                     n-=1
                     i-=1
             i+=1
@@ -725,6 +739,7 @@ class Transcript:
     def parseExtraFields(self):
         pairs=[]
         string=self.extraFields
+        if(string is None): return pairs
         fields=string.split(";")
         for field in fields:
             match=re.search("(\S+)[\s=]+(\S+)",field)

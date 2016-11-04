@@ -266,7 +266,12 @@ class GffTranscriptReader:
         transcript.setGene(gene)
         exon=Exon(exonBegin,exonEnd,transcript)
         exon.extraFields=extra
-        if(not transcript.exonOverlapsExon(exon)):
+        if(transcript.rawExons is not None): 
+            exon.frame=frame
+            exon.score=exonScore
+            exon.type=fields[2]
+            transcript.rawExons.append(exon)
+        elif(not transcript.exonOverlapsExon(exon)):
             exon.frame=frame
             exon.score=exonScore
             exon.type=fields[2]
