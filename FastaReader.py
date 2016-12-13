@@ -15,7 +15,7 @@ import re
 #   shouldUppercase : whether to uppercase all letters
 #   save : buffered line
 # Instance Methods:
-#   FastaReader(filename)
+#   reader=FastaReader(filename)
 #   reader=readerFromFileHandle(fileHandle);
 #   [defline,sequence]=reader.nextSequence()
 #   reader.close()

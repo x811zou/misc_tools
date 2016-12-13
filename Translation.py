@@ -50,7 +50,7 @@ class Translation:
 
     @classmethod
     def complement(cls,c):
-        if(cls.complementMap[c] is None): cls.complementMap[c]="N";
+        if(cls.complementMap.get(c,None) is None): cls.complementMap[c]="N";
         return cls.complementMap[c]
 
     @classmethod

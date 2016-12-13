@@ -29,6 +29,7 @@ import sys
 #   bool=interval.isEmpty()
 #   d=interval.relativeDistanceFromBegin(pos)
 #   d=interval.relativeDistanceFromEnd(pos)
+#   interval.shift(delta)
 #=========================================================================
 
 class Interval:
@@ -105,4 +106,6 @@ class Interval:
    def __repr__(self):
       return "("+str(self.begin)+","+str(self.end)+")"
 
-
+   def shift(self,delta):
+      self.begin+=delta
+      self.end+=delta

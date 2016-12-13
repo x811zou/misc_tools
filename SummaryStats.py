@@ -40,8 +40,8 @@ class SummaryStats:
             if(x>maxX): maxX=x
         meanX=sumX/n
         varX=None if n<2 else (sumXX-sumX*sumX/n)/(n-1)
-        if(varX<0): varX=0
-        stddevX=math.sqrt(varX)
+        if(varX is not None and varX<0): varX=0
+        stddevX=math.sqrt(varX) if varX is not None else None
         return [meanX,stddevX,minX,maxX]
 
     @classmethod

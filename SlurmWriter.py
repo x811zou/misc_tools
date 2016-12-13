@@ -30,9 +30,9 @@ class SlurmWriter:
     """SlurmWriter"""
     def __init__(self):
         self.commands=[]
-        self.niceValue=None
+        self.niceValue=0
         self.MemValue=None
-        self.threadsValue=None
+        self.threadsValue=0
         self.queue=None
 
     def addCommand(self,cmd):
@@ -52,6 +52,7 @@ class SlurmWriter:
 
     def writeArrayScript(self,slurmDir,jobName,runDir,maxParallel,
                          moreSBATCH=""):
+        if(moreSBATCH is None): moreSBATCH=""
         if(maxParallel<1): raise Exception("specify maxParallel parameter")
         moreSBATCH=moreSBATCH.rstrip()
         if(self.niceValue>0) :

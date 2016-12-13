@@ -19,6 +19,7 @@ from Interval import Interval
 #   bool=record.isBed6()
 #   begin=record.getBegin()
 #   end=record.getEnd()
+#   line=record.toString()
 # Class Methods:
 #   
 #=========================================================================
@@ -39,3 +40,7 @@ class Bed3Record:
 
     def getEnd(self):
         return self.interval.end
+
+    def toString(self):
+        return self.chr+"\t"+str(self.interval.begin)+"\t"+\
+            str(self.interval.end)

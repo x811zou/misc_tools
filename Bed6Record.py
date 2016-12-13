@@ -21,6 +21,7 @@ from Bed3Record import Bed3Record
 #   record=Bed6Record(chr,begin,end,name,score,strand)
 #   bool=isBed3()
 #   bool=isBed6()
+#   str=toString()
 # Class Methods:
 #   
 #=========================================================================
@@ -38,4 +39,9 @@ class Bed6Record(Bed3Record):
     def isBed6(self):
         return True
 
-
+    def toString(self):
+        s=self.chr+"\t"+str(self.interval.begin)+"\t"+str(self.interval.end)\
+            +"\t"+self.name
+        if(self.score is not None): s+="\t"+str(self.score)
+        if(self.strand is not None): s+="\t"+self.strand
+        return s
