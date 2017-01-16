@@ -16,8 +16,9 @@ import re
 #   fh : file handle
 # Instance Methods:
 #   reader=BedReader(filename)
-#   reader.close()
 #   record=reader.nextRecord() # Bed3Record or Bed6Record
+#   reader.close()
+#   list=BedReader.readAll(filename)
 # Class Methods:
 #   
 #=========================================================================
@@ -25,6 +26,17 @@ class BedReader:
     """BedReader reads bed3 and/or bed6 files"""
     def __init__(self,filename):
         self.fh=open(filename,"r")
+
+    @classmethod
+    def readAll(cls,filename):
+        reader=BedReader(filename)
+        array=[]
+        while(True):
+            record=reader.nextRecord()
+            if(not record): break
+            array.append(record)
+        reader.close()
+        return array
 
     def close(self):
         self.fh.close()

@@ -22,7 +22,7 @@ from Interval import Interval
 #   data : string (for discrete) or array of float (for continuous)
 #   deflineExtra : extra info for defline
 # Methods:
-#   track=FastbTrack(type,id,data,deflineExtra); # $type="discrete" or "continuous"
+#   track=FastbTrack(type,id,data,deflineExtra); # type="discrete" or "continuous"
 #   type=track.getType()
 #   data=track.getData()
 #   track.setSequence(string) # discrete
@@ -41,6 +41,7 @@ from Interval import Interval
 #      "value" attribute added
 #   newTrack=track.slice(begin,end) # [begin,end) => end not inclusive
 #   meanValue=track.getMean(interval=None) # only for continuous data
+#   (maxValue,maxPos)=track.getMax(interval=None) # only for continuous data
 ######################################################################
 
 class FastbTrack:
@@ -176,6 +177,22 @@ class FastbTrack:
         for i in range(begin,end): sum+=data[i]
         mean=sum/L
         return mean
+
+    def getMax(self,interval=None):
+        data=self.data
+        L=len(data)
+        begin=0
+        end=L
+        if(interval is not None): 
+            begin=interval.begin
+            end=interval.end
+            L=end-begin
+        max=data[begin]; maxPos=begin
+        for i in range(begin+1,end):
+            if(data[i]>max):
+                max=data[i]
+                maxPos=i
+        return (max,maxPos)
 
     def anyZeroValues(self):
         data=self.data

@@ -25,7 +25,7 @@ import re
 #   size=FastaReader.getSize(filename)
 #   FastaReader.readAll(filename) # returns hash : id->sequence
 #   FastaReader.readAllAndKeepDefs(filename) # returns hash : id->[def,seq]
-#   seq=FastaReader.firstSequence(filename)
+#   (defline,seq)=FastaReader.firstSequence(filename)
 #   [id,attribute_hash]=FastaReader.parseDefline(defline)
 #=========================================================================
 class FastaReader:
