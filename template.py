@@ -13,6 +13,9 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 import sys
 import ProgramName
 
+#=========================================================================
+# main()
+#=========================================================================
 if(len(sys.argv)!=2):
     exit(ProgramName.get()+" <>\n")
 ()=sys.argv[1:]

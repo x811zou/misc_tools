@@ -33,6 +33,12 @@ from Interval import Interval
 #   bool=track.isDiscrete()
 #   bool=track.isContinuous()
 #   track.save(FILEHANDLE)
+#
+# Methods for discrete tracks:
+#   getDiscreteContiguousRegions(self) # returns array of Interval with
+#      "value" attribute added
+#
+# Methods for continuous tracks:
 #   array=track.getNonzeroRegions() # returns array of Interval
 #   array=track.getZeroRegions() # returns array of Interval
 #   array=track.getRegionsAbove(cutoff) # returns array of Interval
@@ -86,6 +92,30 @@ class FastbTrack:
         if(self.isDiscrete()): raise Exception("track is not continuous")
         L=len(data)
         intervals=[]
+        if(L==0): return intervals
+        begin=0
+        for i in range(1,L):
+            x=data[i]
+            prev=data[i-1]
+            if(x==prev): continue
+            interval=Interval(begin,i)
+            interval.value=prev
+            intervals.append(interval)
+            begin=i
+        interval=Interval(begin,L)
+        interval.value=data[L-1]
+        intervals.append(interval)
+        return intervals
+
+    def getDiscreteContiguousRegions(self):
+        """getDiscreteContiguousRegions() returns an array of Interval objects
+        with a "value" attribute added
+        """
+        data=self.data
+        if(not self.isDiscrete()): raise Exception("track is not discrete")
+        L=len(data)
+        intervals=[]
+        if(L==0): return intervals
         begin=0
         for i in range(1,L):
             x=data[i]

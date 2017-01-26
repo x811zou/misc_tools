@@ -30,10 +30,13 @@ import sys
 #   d=interval.relativeDistanceFromBegin(pos)
 #   d=interval.relativeDistanceFromEnd(pos)
 #   interval.shift(delta)
+#   center=interval.floatCenter()
+#   center=interval.intCenter()
+#   center=interval.center() # same as floatCenter()
 #=========================================================================
 
 class Interval:
-   """"Interval represents an interval (a,b] in which a is inclusive and
+   """"Interval represents an interval [a,b) in which a is inclusive and
        b is not
    """
    def __init__(self,begin=0,end=0):
@@ -109,3 +112,14 @@ class Interval:
    def shift(self,delta):
       self.begin+=delta
       self.end+=delta
+
+   def floatCenter(self):
+      return float(self.begin+self.end)/2.0
+
+   def intCenter(self):
+      return (self.begin+self.end)/2
+
+   def center(self):
+      return self.floatCenter()
+
+

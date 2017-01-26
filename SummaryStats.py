@@ -14,7 +14,7 @@ import math
 #    
 # Methods:
 #    [mean,SD,min,max]=SummaryStats.summaryStats(array)
-#    [mean,SD,min,max)=SummaryStats.roundedSummaryStats(array)
+#    [mean,SD,min,max]=SummaryStats.roundedSummaryStats(array)
 #    sum=SummaryStats.sum(array)
 #    r=SummaryStats.correlation(array1,array2)
 ######################################################################

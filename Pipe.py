@@ -16,13 +16,12 @@ import sys
 # Instance Methods:
 #   pipe=Pipe(command)
 #   line=pipe.readline()
+#   output=Pipe.run(command)
 #=========================================================================
 class Pipe:
     """Pipe reads output from a shell command"""
     def __init__(self,cmd):
-        #command=cmd.split()
-        command=cmd
-        p=subprocess.Popen(command,stdout=subprocess.PIPE,shell=True,
+        p=subprocess.Popen(cmd,stdout=subprocess.PIPE,shell=True,
                            stderr=subprocess.STDOUT)
         self.iter=iter(p.stdout.readline, b'')
 
@@ -31,3 +30,8 @@ class Pipe:
         if(line is None): return None
         line=line.decode(sys.stdout.encoding).rstrip()
         return line
+
+    @classmethod
+    def run(cls,cmd):
+        return subprocess.check_output(cmd,stderr=subprocess.STDOUT,shell=True)
+

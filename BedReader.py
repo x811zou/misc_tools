@@ -19,6 +19,7 @@ import re
 #   record=reader.nextRecord() # Bed3Record or Bed6Record
 #   reader.close()
 #   list=BedReader.readAll(filename)
+#   hash=BedReader.hashBySubstrate(filename) # chr -> list of records
 # Class Methods:
 #   
 #=========================================================================
@@ -37,6 +38,16 @@ class BedReader:
             array.append(record)
         reader.close()
         return array
+
+    @classmethod
+    def hashBySubstrate(cls,filename):
+        list=cls.readAll(filename)
+        hash={}
+        for rec in list:
+            if(hash.get(rec.chr,None) is None):
+                hash[rec.chr]=[]
+            hash[rec.chr].append(rec)
+        return hash
 
     def close(self):
         self.fh.close()
