@@ -20,7 +20,7 @@ from FastbTrack import FastbTrack
 #   trackHash : hash mapping name to FastbTrack
 #   trackArray : array of FastbTrack
 # Methods:
-#   fastb=Fastb(filename)
+#   fastb=Fastb(filename=None)
 #   n=fastb.numTracks()
 #   L=fastb.getLength()
 #   track=fastb.getIthTrack(i)
@@ -29,6 +29,7 @@ from FastbTrack import FastbTrack
 #   fastb.addTrack(fastbTrack)
 #   fastb.save(filename)
 #   newFastb=fastb.slice(begin,end)
+#   newFastb=fastb.sliceInterval(Interval)
 #   fastb.dropTrack(trackName)
 # Private:
 #   fastb=Fastb()
@@ -78,6 +79,9 @@ class Fastb:
             track=self.getIthTrack(i)
             newFastb.addTrack(track.slice(begin,end))
         return newFastb
+
+    def sliceInterval(self,interval):
+        return self.slice(interval.begin,interval.end)
 
     def dropTrack(self,name):
         n=self.numTracks()

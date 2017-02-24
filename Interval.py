@@ -19,6 +19,7 @@ import sys
 #   bool=interval.overlaps(other)
 #   bool=interval.contains(position)
 #   bool=interval.containsInterval(other)
+#   distance=interval.distance(other)
 #   intersection=interval.intersect(other)
 #   union=interval.union(other) # returns an array of intervals
 #   diff=interval.minus(other)  # returns an array of intervals
@@ -48,6 +49,12 @@ class Interval:
 
    def overlaps(self,other):
       return self.begin<other.end and other.begin<self.end
+
+   def distance(self,other):
+      if(self.overlaps(other)): return 0
+      d=self.begin-other.end
+      if(d>0): return d
+      return other.begin-self.end
 
    def contains(self,index):
       return index>=self.begin and index<self.end
@@ -117,7 +124,7 @@ class Interval:
       return float(self.begin+self.end)/2.0
 
    def intCenter(self):
-      return (self.begin+self.end)/2
+      return int((self.begin+self.end)/2)
 
    def center(self):
       return self.floatCenter()

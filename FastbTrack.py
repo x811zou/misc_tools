@@ -22,7 +22,7 @@ from Interval import Interval
 #   data : string (for discrete) or array of float (for continuous)
 #   deflineExtra : extra info for defline
 # Methods:
-#   track=FastbTrack(type,id,data,deflineExtra); # type="discrete" or "continuous"
+#   track=FastbTrack(type,id,data,deflineExtra="") # type="discrete" or "continuous"
 #   type=track.getType()
 #   data=track.getData()
 #   track.setSequence(string) # discrete
@@ -51,7 +51,7 @@ from Interval import Interval
 ######################################################################
 
 class FastbTrack:
-    def __init__(self,type,id,data,deflineExtra):
+    def __init__(self,type,id,data,deflineExtra=""):
         self.type=type
         self.id=id
         self.data=data

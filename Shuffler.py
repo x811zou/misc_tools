@@ -7,33 +7,27 @@ from __future__ import (absolute_import, division, print_function,
    unicode_literals, generators, nested_scopes, with_statement)
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-import subprocess
-import sys
+import random
 
 #=========================================================================
 # Attributes:
-#   iter
+#   
 # Instance Methods:
-#   pipe=Pipe(command)
-#   line=pipe.readline()
-#   output=Pipe.run(command)
+#   Shuffler()
+# Class Methods:
+#   
 #=========================================================================
-class Pipe:
-    """Pipe reads output from a shell command"""
-    def __init__(self,cmd):
-        p=subprocess.Popen(cmd,stdout=subprocess.PIPE,shell=True,
-                           stderr=subprocess.STDOUT)
-        self.iter=iter(p.stdout.readline, b'')
-
-    def readline(self):
-        line=next(self.iter,None)
-        if(line is None): return None
-        line=line.decode(sys.stdout.encoding).rstrip()
-        return line
+class Shuffler:
+    """Shuffler shuffles arrays"""
+    def __init__(self):
+        pass
 
     @classmethod
-    def run(cls,cmd):
-        line=subprocess.check_output(cmd,stderr=subprocess.STDOUT,shell=True)
-        line=line.decode(sys.stdout.encoding).rstrip()
-        return line
+    def shuffle(cls,array):
+        L=len(array)
+        for i in range(L):
+            j=random.randint(0,L-1)
+            temp=array[i]
+            array[i]=array[j]
+            array[j]=temp
 
