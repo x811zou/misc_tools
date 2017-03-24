@@ -13,9 +13,10 @@ import re
 # Attributes:
 #   match : returned from re.search()
 # Instance Methods:
-#   r=Rex()
-#   bool=r.find("abc(\d+)def(\d+)ghi(\d+)",line)
-#   x=r[1]; y=r[2]; z=r[3]
+#   rex=Rex()
+#   bool=rex.find("abc(\d+)def(\d+)ghi(\d+)",line)
+#   rex.findOrDie("abc(\d+)def(\d+)ghi(\d+)",line)
+#   x=rex[1]; y=rex[2]; z=rex[3]
 #=========================================================================
 class Rex:
     """Rex -- more compact regular expression matching similar to Perl"""
@@ -26,6 +27,9 @@ class Rex:
     def find(self,pattern,line):
         self.match=re.search(pattern,line)
         return self.match is not None
+
+    def findOrDie(self,pattern,line):
+        if(not self.find(pattern,line)): raise Exception("can't parse: "+line)
 
     def __getitem__(self,index):
         return self.match.group(index)

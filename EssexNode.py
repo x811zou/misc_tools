@@ -23,6 +23,7 @@ import re
 #   elements : array
 # Methods:
 #   node=EssexNode([tag,elem1,elem2,...])
+#   node->addElem(elem)
 #   tag=node.getTag()
 #   node.changeTag(newTag)
 #   n=node.numElements()
@@ -37,6 +38,7 @@ import re
 #   n=node.countDescendents(tag)
 #   bool=node.hasDescendent(tag)
 #   string=node.getAttribute(attributeTag)
+#   node.setAttribute(tag,value)
 #   array=node.getElements()
 #   bool=EssexNode.isaNode(datum)
 #   bool=node.hasCompositeChildren()
@@ -66,6 +68,17 @@ class EssexNode:
         else:
             self.tag=""
             self.elements=[]
+
+    def addElem(self,elem):
+        self.elements.append(elem)
+
+    def setAttribute(self,tag,value):
+        elements=self.elements
+        for elem in elements:
+            if(EssexNode.isaNode(elem) and elem.getTag()==tag):
+                elem.setIthElem(0,value)
+                return
+        elements.append(EssexNode([tag,value]))
 
     def getTag(self):
         return self.tag
@@ -227,7 +240,7 @@ class EssexNode:
         else:
              for i in range(n):
                  elem=elements[i]
-                 file.write(" "+elem)
+                 file.write(" "+str(elem))
         file.write(")")
 
     def printExonXML(self,tag,tab,depth,file):

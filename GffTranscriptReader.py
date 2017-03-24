@@ -179,9 +179,11 @@ class GffTranscriptReader:
             startCodon=None
             totalIntronSize=Integer(0)
             if(strand=="+"):
-                startCodon=self.adjustStartCodons_fw(transcript,totalIntronSize)
+                startCodon=\
+                    self.adjustStartCodons_fw(transcript,totalIntronSize)
             else:
-                startCodon=self.adjustStartCodons_bw(transcript,totalIntronSize)
+                startCodon=\
+                    self.adjustStartCodons_bw(transcript,totalIntronSize)
             if(startCodon is not None):
                 startCodon-=int(totalIntronSize)
                 transcript.startCodon=startCodon
@@ -391,7 +393,7 @@ class GffTranscriptReader:
             if(not line): break
             if(not re.search("\S+",line)): continue
             if(re.search("^\s*\#",line)): continue
-            fields=line.split()
+            fields=line.split("\t") ### \t added 3/24/2017
             if(len(fields)<8): raise Exception("can't parse GTF:"+line)
             if(fields[2]=="transcript"):
                 #print("loading transcript line")

@@ -527,7 +527,7 @@ class Transcript:
                 numExons-=1
                 j-=1
                 startCodon-=length
-                self.adjustOrders() ### 4/1/03
+                self.adjustOrders()
             else:
                 if(strand=="+"):
                     exon.trimInitialPortion(startCodon)
@@ -692,38 +692,30 @@ class Transcript:
         for exon in exons: exon.setStrand(strand)
 
     def getRawExons(self):
-        #print("getRawExons",self.getID())
         rawExons=self.rawExons
         if(not rawExons or len(rawExons)==0):
             exons=self.exons
             UTR=self.UTR
             rawExons=[]
             for exon in exons: 
-                #print("exon",exon.getLength())
                 if(exon.getLength()>0): rawExons.append(exon.copy())
             for utr in UTR: 
-                #print("UTR",utr.getLength())
                 if(utr.getLength()>0): rawExons.append(utr.copy())
         # Sort into chromosome order (temporarily):
         rawExons.sort(key=lambda exon: exon.begin)
         # Now coalesce any UTR-exon pairs that are adjacent:
         n=len(rawExons)
-        #print(n,"exons")
         i=0
         while(i<n):
             exon=rawExons[i]
-            #print("exon",i,exon.getBegin(),exon.getEnd())
             exon.setType("exon")
             if(i+1<n):
                 nextExon=rawExons[i+1]
-                #print("next exon",i+1,nextExon.getBegin(),nextExon.getEnd())
                 if(exon.getEnd()==nextExon.getBegin() or
                    exon.getEnd()==nextExon.getBegin()-1):
                     exon.setEnd(nextExon.getEnd())
                     nextExon=None
-                    #print("deleting exon",i+1,"count="+str(len(rawExons)))
                     rawExons.pop(i+1)
-                    #print("now count="+str(len(rawExons)))
                     n-=1
                     i-=1
             i+=1
@@ -742,10 +734,10 @@ class Transcript:
         if(string is None): return pairs
         fields=string.split(";")
         for field in fields:
-            match=re.search("(\S+)[\s=]+(\S+)",field)
+            match=re.search("(\S+)[\s=]+([^;]+)",field)
             if(not match): continue
             (key,value)=(match.group(1),match.group(2))
-            match=re.search("\"(\S+)\"",value)
+            match=re.search("\"(.+)\"",value)
             if(match): value=match.group(1)
             pairs.append([key,value])
         return pairs
