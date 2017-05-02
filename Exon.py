@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
    unicode_literals, generators, nested_scopes, with_statement)
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from Interval import Interval
 
 ######################################################################
 #
@@ -53,6 +54,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #   gff=exon.toGff()
 #   begin=exon.getBegin()
 #   end=exon.getEnd()
+#   interval=exon.asInterval()
 #   frame=exon.getFrame()
 #   exon.setFrame(frame)
 #   type=exon.getType()
@@ -86,6 +88,9 @@ class Exon:
 
     def containsCoordinate(self,x):
         return x>=self.begin and x<self.end
+
+    def asInterval(self):
+        return Interval(self.begin,self.end)
 
     def getLength(self):
         return self.end-self.begin

@@ -23,6 +23,7 @@ import re
 #   reader.doUppercase()
 # Class Methods:
 #   size=FastaReader.getSize(filename)
+#   num=FastaReader.countEntries(filename)
 #   FastaReader.readAll(filename) # returns hash : id->sequence
 #   FastaReader.readAllAndKeepDefs(filename) # returns hash : id->[def,seq]
 #   (defline,seq)=FastaReader.firstSequence(filename)
@@ -95,12 +96,22 @@ class FastaReader:
         return [defline,seq]
 
     @classmethod
+    def countEntries(cls,filename):
+        n=0
+        reader=FastaReader(filename)
+        while(True):
+            (defline,seq)=reader.nextSequence()
+            if(not defline): break
+            n+=1
+        return n
+
+    @classmethod
     def readAll(cls,filename):
         hash={}
         reader=FastaReader(filename)
         while(True):
             [defline,seq]=reader.nextSequence()
-            if(not defline): break;
+            if(not defline): break
             match=re.search("^\s*>(\S+)",defline)
             if(not match): raise Exception("can't parse defline: "+defline)
             id=match.group(1)
@@ -114,7 +125,7 @@ class FastaReader:
         reader=FastaReader(filename)
         while(True):
             [defline,seq]=reader.nextSequence()
-            if(not defline): break;
+            if(not defline): break
             match=re.search("^\s*>(\S+)",defline)
             if(not match): raise Exception("can't parse defline: "+defline)
             id=match.group(1)

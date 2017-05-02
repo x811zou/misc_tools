@@ -25,6 +25,7 @@ import re
 #                regardless of strand
 #   startCodonAbsolute : absolute coordinates of start codon, 
 #                        relative to genomic axis
+#   score : float
 #   strand : + or -
 #   exons : pointer to array of Exons (which are actually CDS segments)
 #   UTR : pointer to array of UTR segments
@@ -124,6 +125,7 @@ class Transcript:
     def __init__(self,id,strand=None):
         if(type(id)!=EssexNode): # not an EssexNode
             self.transcriptId=id
+            self.score=None
             self.strand=strand
             self.exons=[]
             self.UTR=[]
@@ -131,6 +133,8 @@ class Transcript:
             self.stopCodons={"TAG":1,"TGA":1,"TAA":1}
             self.startCodon=None
             self.extraFields=None
+            self.structureChange=None
+            self.fate=None
         else: # EssexNode
             essex=id
             self.transcriptId=essex.getAttribute("ID")
@@ -140,12 +144,24 @@ class Transcript:
             self.end=essex.getAttribute("end")
             self.geneId=essex.getAttribute("gene")
             self.substrate=essex.getAttribute("substrate")
+            score=essex.getAttribute("score")
+            self.score=float(score) if score!="." else None
             self.exons=[]
             self.UTR=[]
             self.rawExons=None
             self.startCodon=None
             self.extraFields=None
             self.stopCodons={"TAG":1,"TGA":1,"TAA":1}
+            changeNode=essex.findChild("structure-change")
+            if(changeNode is not None):
+                changeString=""
+                numElem=changeNode.numElements()
+                for i in range(0,numElem):
+                    elem=changeNode.getIthElem(i)
+                    if(EssexNode.isaNode(elem)): continue
+                    if(changeString!=""): changeString+=" "
+                    changeString+=elem
+                if(len(changeString)>0): self.structureChange=changeString
             exons=self.exons
             UTR=self.UTR
             exonsElem=essex.findChild("exons")
@@ -442,9 +458,14 @@ class Transcript:
             strand=self.strand
             extra=""
             if(re.search("\S",extraFields)): extra="; "+extraFields
+            change=self.structureChange
+            if(change): extra+="; structure_change \""+change+"\""
+            score=self.score
+            if(score is None): score="."
             gff+=substrate+"\t"+source+"\ttranscript\t"+str(begin)+"\t" \
-                  +str(end)+"\t.\t"+strand+"\t.\ttranscript_id \""+transID+ \
-                  "\"; gene_id \""+geneID+"\""+extra+"\n"
+                  +str(end)+"\t"+str(score)+"\t"+strand+ \
+                  "\t.\ttranscript_id \""+ \
+                  transID+ "\"; gene_id \""+geneID+"\""+extra+"\n"
         for exon in exons: gff+=exon.toGff()
         UTR=self.UTR
         for exon in UTR:
@@ -596,12 +617,13 @@ class Transcript:
         self.recomputeBoundaries()
         
     def getScore(self):
-        exons=self.exons
-        score=0;
-        for exon in exons:
-            exonScore=exon.getScore()
-            if(exonScore!="."): score+=exonScore
-        return score
+        return self.score
+        #exons=self.exons
+        #score=0;
+        #for exon in exons:
+        #    exonScore=exon.getScore()
+        #    if(exonScore!="."): score+=exonScore
+        #return score
 
     def getIntrons(self):
         exons=self.getRawExons()

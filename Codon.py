@@ -35,7 +35,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 
 class Codon:
     def __init__(self,exon,triplet,relative,absolute,isInterrupted):
-        if(not relative): raise Exception("relative is not set")
+        if(relative is None): raise Exception("relative is not set")
         self.triplet=triplet
         self.exon=exon
         self.relativeCoord=relative

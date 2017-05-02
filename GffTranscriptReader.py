@@ -197,6 +197,7 @@ class GffTranscriptReader:
             transcriptId=rex[1]
             transcriptBeginEnd[transcriptId]=[begin,end]
             strand=fields[6]
+            score=fields[5]
             transcriptExtraFields=""
             for i in range(8,len(fields)):
                 transcriptExtraFields+=fields[i]+" "
@@ -211,6 +212,8 @@ class GffTranscriptReader:
                 transcript.source=fields[1]
                 transcript.setBegin(begin)
                 transcript.setEnd(end)
+            if(transcript.score is None and
+               score!="."): transcript.score=float(score)
             geneId=None
             if(rex.find("genegrp=(\S+)",line)): geneId=rex[1]
             elif(rex.find('gene_id[:=]?\s*\"?([^\s\;"]+)\"?',line)):
@@ -389,26 +392,21 @@ class GffTranscriptReader:
         transcriptBeginEnd={}
         while(True):
             line=GFF.readline()
-            #print("LINE="+line)
             if(not line): break
             if(not re.search("\S+",line)): continue
             if(re.search("^\s*\#",line)): continue
             fields=line.split("\t") ### \t added 3/24/2017
             if(len(fields)<8): raise Exception("can't parse GTF:"+line)
             if(fields[2]=="transcript"):
-                #print("loading transcript line")
                 self.loadGFF_transcript(fields,line,transcriptBeginEnd,GFF,
                                    transcripts,readOrder,genes)
             elif("UTR" in fields[2] or "utr" in fields[2]):
-                #print("loading UTR")
                 self.loadGFF_UTR(fields,line,transcriptBeginEnd,GFF,
                             transcripts,readOrder,genes)
             elif(fields[2]=="exon"):
-                #print("loading exon: "+line)
                 self.loadGFF_exon(fields,line,transcriptBeginEnd,GFF,
                              transcripts,readOrder,genes)
             elif("CDS" in fields[2] or "-exon" in fields[2]):
-                #print("loading CDS")
                 self.loadGFF_CDS(fields,line,transcriptBeginEnd,GFF,
                             transcripts,readOrder,genes)
         GFF.close()

@@ -150,7 +150,7 @@ class GFF3Parser:
         t=root["type"]
         if(t=="gene"):
             obj=self.makeGene(root)
-        elif(t=="transcript"):
+        elif(t=="transcript" or t=="mRNA"):
             obj=self.makeTranscript(root)
         elif(t=="exon" or t=="CDS"):
             obj=self.makeExon(root)
@@ -335,4 +335,4 @@ def test_parser7(filename):
     for gene in genes:
         print(gene.toGff())
         
-test_parser7("/Users/bmajoros/python/test/data/subset.gff3")
+#test_parser7("/Users/bmajoros/python/test/data/subset.gff3")

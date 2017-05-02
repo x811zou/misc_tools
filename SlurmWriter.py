@@ -23,7 +23,7 @@ import os
 #   writer.mem(1500)
 #   writer.threads(16)
 #   writer.setQueue("new,all")
-#   writer.writeArrayScript(slurmDir,jobName,runDir,maxParallel,
+#   writer.writeArrayScript(slurmDir,jobName,maxParallel,
 #                           additional_SBATCH_lines)
 #=========================================================================
 class SlurmWriter:
@@ -31,7 +31,7 @@ class SlurmWriter:
     def __init__(self):
         self.commands=[]
         self.niceValue=0
-        self.MemValue=None
+        self.memValue=0
         self.threadsValue=0
         self.queue=None
 
@@ -50,8 +50,7 @@ class SlurmWriter:
     def setQueue(self,value):
         self.queue=value
 
-    def writeArrayScript(self,slurmDir,jobName,runDir,maxParallel,
-                         moreSBATCH=""):
+    def writeArrayScript(self,slurmDir,jobName,maxParallel,moreSBATCH=""):
         if(moreSBATCH is None): moreSBATCH=""
         if(maxParallel<1): raise Exception("specify maxParallel parameter")
         moreSBATCH=moreSBATCH.rstrip()

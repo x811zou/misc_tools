@@ -34,7 +34,7 @@ from Translation import Translation
 class CodonIterator:
     def __init__(self,transcript,axisSequenceRef,stopCodons):
         self.transcript=transcript
-        self.stopCodon=selCodons
+        self.stopCodons=stopCodons
 
         # Advance to the exon containing the start codon
         exons=transcript.exons
@@ -42,7 +42,7 @@ class CodonIterator:
         startCodon=transcript.startCodonAbsolute
         if(startCodon):
             if(len(axisSequenceRef)==0): raise Exception("empty sequence")
-            transcript.loadExonSequences(axisSequenceRef)
+            transcript.loadExonSequences(axisSequenceRef,transcript.exons)
             numExons=len(exons)
             exon=None
             for i in range(0,numExons):
@@ -120,7 +120,7 @@ class CodonIterator:
                 self.exon=nextExon
         else: # codon was not interrupted by end of exon
             triplet=exonSeq[relative:relative+3]
-            if(isStopCodon[triplet]): self.exon=None
+            if(isStopCodon.get(triplet,False)): self.exon=None
             else:
                 self.relative+=3
                 self.absolute+=3 if strand=="+" else -3

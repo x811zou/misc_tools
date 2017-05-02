@@ -24,6 +24,8 @@ import sys
 #   union=interval.union(other) # returns an array of intervals
 #   diff=interval.minus(other)  # returns an array of intervals
 #   length=interval.getLength()
+#   begin=interval.getBegin()
+#   end=interval.getEnd()
 #   length=interval.length()
 #   bool=interval.equals($other)
 #   other=interval.clone()
@@ -81,6 +83,12 @@ class Interval:
 
    def getLength(self):
       return self.length()
+
+   def getBegin(self):
+      return self.begin
+
+   def getEnd(self):
+      return self.end
 
    def equals(self,other):
       return self.begin==other.begin and self.end==other.end
