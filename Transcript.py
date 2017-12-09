@@ -132,9 +132,12 @@ class Transcript:
             self.rawExons=None
             self.stopCodons={"TAG":1,"TGA":1,"TAA":1}
             self.startCodon=None
+            self.startCodonAbsolute=None
             self.extraFields=None
             self.structureChange=None
             self.fate=None
+            self.begin=None
+            self.end=None
         else: # EssexNode
             essex=id
             self.transcriptId=essex.getAttribute("ID")
@@ -634,8 +637,12 @@ class Transcript:
         for exon in exons:
             if(lastExonEnd):
                 if(strand=="+"):
+                    if(lastExonEnd>exon.getBegin()): exit("XXX "+str(lastExonEnd)+" "+str(exon.getBegin())+" "+strand)
                     introns.append(Interval(lastExonEnd,exon.getBegin()))
                 else:
+                    if(lastExonEnd<exon.getEnd()): 
+                        for exon in exons: print("ZZZ",exon.toGff())
+                        exit("YYY "+str(exon.getEnd())+" "+str(lastExonEnd)+" "+strand+" "+self.toGff())
                     introns.append(Interval(exon.getEnd(),lastExonEnd))
             lastExonEnd=exon.getEnd() if strand=="+" else exon.getBegin()
         return introns
@@ -734,7 +741,8 @@ class Transcript:
             if(i+1<n):
                 nextExon=rawExons[i+1]
                 if(exon.getEnd()==nextExon.getBegin() or
-                   exon.getEnd()==nextExon.getBegin()-1):
+                   exon.getEnd()==nextExon.getBegin()-1 or
+                   exon.overlaps(nextExon)):
                     exon.setEnd(nextExon.getEnd())
                     nextExon=None
                     rawExons.pop(i+1)
@@ -794,6 +802,7 @@ class Transcript:
             if(CDS is None or len(CDS)==0): self.UTR=rawExons
             return
         UTR=[]
+        seen=set()
         if(strand=="+"):
             for exon in rawExons:
                 begin=exon.getBegin()
@@ -802,21 +811,33 @@ class Transcript:
                     if(end<=cdsBegin):
                         newExon=exon.copy()
                         newExon.setType("five_prime_UTR")
+                        key=str(newExon.begin)+"-"+str(newExon.end)
+                        if(key in seen): continue
+                        seen.add(key)
                         UTR.append(newExon)
                     else:
                         newExon=exon.copy()
                         newExon.setEnd(cdsBegin)
                         newExon.setType("five_prime_UTR")
+                        key=str(newExon.begin)+"-"+str(newExon.end)
+                        if(key in seen): continue
+                        seen.add(key)
                         UTR.append(newExon)
                 if(end>cdsEnd):
                     if(begin>=cdsEnd):
                         newExon=exon.copy()
                         newExon.setType("three_prime_UTR")
+                        key=str(newExon.begin)+"-"+str(newExon.end)
+                        if(key in seen): continue
+                        seen.add(key)
                         UTR.append(newExon)
                     else:
                         newExon=exon.copy()
                         newExon.setBegin(cdsEnd)
                         newExon.setType("three_prime_UTR")
+                        key=str(newExon.begin)+"-"+str(newExon.end)
+                        if(key in seen): continue
+                        seen.add(key)
                         UTR.append(newExon)
         else: # strand=="-"
             for exon in rawExons:
@@ -826,21 +847,33 @@ class Transcript:
                     if(end<=cdsBegin):
                         newExon=exon.copy()
                         newExon.setType("three_prime_UTR")
+                        key=str(newExon.begin)+"-"+str(newExon.end)
+                        if(key in seen): continue
+                        seen.add(key)
                         UTR.append(newExon)
                     else:
                         newExon=exon.copy()
                         newExon.setEnd(cdsBegin)
                         newExon.setType("three_prime_UTR")
+                        key=str(newExon.begin)+"-"+str(newExon.end)
+                        if(key in seen): continue
+                        seen.add(key)
                         UTR.append(newExon)
                 if(end>cdsEnd):
                     if(begin>=cdsEnd):
                         newExon=exon.copy()
                         newExon.setType("five_prime_UTR")
+                        key=str(newExon.begin)+"-"+str(newExon.end)
+                        if(key in seen): continue
+                        seen.add(key)
                         UTR.append(newExon)
                     else:
                         newExon=exon.copy()
                         newExon.setBegin(cdsEnd)
                         newExon.setType("five_prime_UTR")
+                        key=str(newExon.begin)+"-"+str(newExon.end)
+                        if(key in seen): continue
+                        seen.add(key)
                         UTR.append(newExon)
         self.UTR=UTR
 

@@ -203,7 +203,7 @@ class Exon:
         end=self.getEnd()
         self.begin=seqLen-end
         self.end=seqLen-begin
-        self.strand=compStrand(self.strand)
+        self.strand=self.compStrand(self.strand)
 
     def copy(self):
         new=Exon(self.begin,self.end,self.transcript)

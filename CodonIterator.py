@@ -51,7 +51,7 @@ class CodonIterator:
                    exon.containsCoordinate(startCodon-1)): break
             if(not exon.containsCoordinate(startCodon) and
                not exon.containsCoordinate(startCodon-1)):
-                raise Exception("start codon not found: "+str(startCodon))
+                raise Exception(transcript.getID()+"start codon not found: "+str(startCodon))
             self.exon=exon
             self.relative=(startCodon-exon.begin) if strand=="+" else \
                 exon.end-startCodon
@@ -99,7 +99,7 @@ class CodonIterator:
             triplet=exonSeq[relative:relative+thisExonContrib]
             transcript=self.transcript
             thisExonOrder=exon.order
-            if(not thisExonOrder): raise Exception("exon has no order")
+            if(thisExonOrder is None): raise Exception("exon has no order")
             exons=transcript.exons
             numExons=len(exons)
             nextExonOrder=thisExonOrder+1
@@ -113,7 +113,7 @@ class CodonIterator:
                     exonLen1=exon.getLength()
                     realSeqLen2=len(nextExon.sequence)
                     exonLen2=nextExon.getLength()
-                    raise Exception("Error in transcript "+transcriptId+": nextContrib="+nextExonContrib+" triplet=\""+triplet+"\" exonLen1="+exonLen1+" realLen1="+realSeqLen1+" exonLen2="+exonLen2+" realLen2="+realSeqLen2)
+                    raise Exception("Error in transcript "+transcriptId+": nextContrib="+str(nextExonContrib)+" triplet=\""+triplet+"\" exonLen1="+str(exonLen1)+" realLen1="+str(realSeqLen1)+" exonLen2="+str(exonLen2)+" realLen2="+str(realSeqLen2))
                 self.relative=nextExonContrib
                 self.absolute=nextExon.begin+nextExonContrib if strand=="+" \
                                else nextExon.end-nextExonContrib

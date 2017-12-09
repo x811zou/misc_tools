@@ -52,16 +52,17 @@ class SlurmWriter:
 
     def writeArrayScript(self,slurmDir,jobName,maxParallel,moreSBATCH=""):
         if(moreSBATCH is None): moreSBATCH=""
-        if(maxParallel<1): raise Exception("specify maxParallel parameter")
+        if(int(maxParallel)<1): raise Exception("specify maxParallel parameter")
         moreSBATCH=moreSBATCH.rstrip()
+        if(len(moreSBATCH)>0):
+            moreSBATCH=moreSBATCH.rstrip()+"\n"
+        #moreSBATCH=moreSBATCH+"\n"
         if(self.niceValue>0) :
             moreSBATCH+="#SBATCH --nice="+str(self.niceValue)+"\n"
         if(self.memValue>0):
             moreSBATCH+="#SBATCH --mem="+str(self.memValue)+"\n"
         if(self.threadsValue>0):
             moreSBATCH+="#SBATCH --cpus-per-task="+str(self.threadsValue)+"\n"
-        if(len(moreSBATCH)>0):
-            moreSBATCH=moreSBATCH.rstrip()+"\n"
         queue=""
         if(len(self.queue)>0):
             queue="#SBATCH -p "+self.queue+"\n"

@@ -27,7 +27,7 @@ import sys
 #   begin=interval.getBegin()
 #   end=interval.getEnd()
 #   length=interval.length()
-#   bool=interval.equals($other)
+#   bool=interval.equals(other)
 #   other=interval.clone()
 #   bool=interval.isEmpty()
 #   d=interval.relativeDistanceFromBegin(pos)

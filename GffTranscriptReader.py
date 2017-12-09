@@ -30,12 +30,14 @@ import re
 #
 # Attributes:
 #   shouldSortTranscripts
+#   exonsAreCDS : interpret "exon" features as "CDS" when reading GFF
 # Methods:
 #   reader=GffTranscriptReader()
 #   reader.setStopCodons({"TAG":1,"TAA":1,"TGA":1})
 #   transcriptArray=reader.loadGFF(filename)
 #   geneList=reader.loadGenes(filename)
 #   hashTable=reader.hashBySubstrate(filename)
+#   reader.hashBySubstrateInto(filename,hash)
 #   hashTable=reader.hashGenesBySubstrate(filename)
 #   hashTable=reader.loadTranscriptIdHash(filename)
 #   hashTable=reader.loadGeneIdHash(filename)
@@ -45,6 +47,7 @@ import re
 class GffTranscriptReader:
     def __init__(self):
         self.shouldSortTranscripts=True
+        self.exonsAreCDS=False
         self.stopCodons={"TAG":1,"TAA":1,"TGA":1}
 
     def loadGenes(self,filename):
@@ -53,7 +56,8 @@ class GffTranscriptReader:
         for transcript in transcripts:
             gene=transcript.getGene()
             if(not gene):
-                raise Exception("transcript "+transcript.getID()+" has no gene")
+                raise Exception("transcript "+transcript.getID()+
+                                " has no gene")
             genes.add(gene)
         genes=list(genes)
         genes.sort(key=lambda gene: gene.getBegin())
@@ -81,14 +85,17 @@ class GffTranscriptReader:
         return hash
 
     def hashBySubstrate(self,filename):
-        transcriptArray=self.loadGFF(filename)
         hash={}
+        self.hashBySubstrateInto(filename,hash)
+        return hash
+
+    def hashBySubstrateInto(self,filename,hash):
+        transcriptArray=self.loadGFF(filename)
         for transcript in transcriptArray:
             id=transcript.getSubstrate()
             array=hash.get(id,None)
             if(array is None): array=hash[id]=[]
             array.append(transcript)
-        return hash
 
     def hashGenesBySubstrate(self,filename):
         geneArray=self.loadGenes(filename)
@@ -124,6 +131,8 @@ class GffTranscriptReader:
         exons=transcript.exons
         exons.sort(key=lambda exon: exon.begin)
         numExons=len(exons)
+        #if(transcript.getID()=="ENST00000361390.2"):
+        #    print("adjustStartCodons_fw",numExons,"exons")
         if(numExons==0): return None
         if(transcript.begin is None) :
             transcript.begin=exons[0].begin
@@ -260,10 +269,13 @@ class GffTranscriptReader:
             readOrder+=1
             transcript.substrate=fields[0]
             transcript.source=fields[1]
-            if(transcriptBeginEnd.find(transcriptId,None) is not None):
+            if(transcriptBeginEnd.get(transcriptId,None) is not None):
                 (begin,end)=transcriptBeginEnd[transcriptId]
                 transcript.setBegin(begin)
                 transcript.setEnd(end)
+            else:
+                transcript.setBegin(exonBegin)
+                transcript.setEnd(exonEnd)
         transcript.geneId=geneId
         gene=genes.get(geneId,None)
         if(gene is None):
@@ -319,6 +331,9 @@ class GffTranscriptReader:
                 (begin,end)=transcriptBeginEnd[transcriptId]
                 transcript.setBegin(begin)
                 transcript.setEnd(end)
+            else:
+                transcript.setBegin(exonBegin)
+                transcript.setEnd(exonEnd)
         transcript.geneId=geneId
         gene=genes.get(geneId,None)
         if(gene is None):
@@ -370,6 +385,9 @@ class GffTranscriptReader:
                 (begin,end)=transcriptBeginEnd[transcriptId]
                 transcript.setBegin(begin)
                 transcript.setEnd(end)
+            else:
+                transcript.setBegin(exonBegin)
+                transcript.setEnd(exonEnd)
         transcript.geneId=geneId
         gene=genes.get(geneId,None)
         if(gene is None):
@@ -397,15 +415,19 @@ class GffTranscriptReader:
             if(re.search("^\s*\#",line)): continue
             fields=line.split("\t") ### \t added 3/24/2017
             if(len(fields)<8): raise Exception("can't parse GTF:"+line)
-            if(fields[2]=="transcript"):
+            if(fields[2]=="transcript" or fields[2]=="mRNA"):
                 self.loadGFF_transcript(fields,line,transcriptBeginEnd,GFF,
                                    transcripts,readOrder,genes)
             elif("UTR" in fields[2] or "utr" in fields[2]):
                 self.loadGFF_UTR(fields,line,transcriptBeginEnd,GFF,
                             transcripts,readOrder,genes)
             elif(fields[2]=="exon"):
-                self.loadGFF_exon(fields,line,transcriptBeginEnd,GFF,
-                             transcripts,readOrder,genes)
+                if(self.exonsAreCDS):
+                    self.loadGFF_CDS(fields,line,transcriptBeginEnd,GFF,
+                                     transcripts,readOrder,genes)
+                else:
+                    self.loadGFF_exon(fields,line,transcriptBeginEnd,GFF,
+                                      transcripts,readOrder,genes)
             elif("CDS" in fields[2] or "-exon" in fields[2]):
                 self.loadGFF_CDS(fields,line,transcriptBeginEnd,GFF,
                             transcripts,readOrder,genes)

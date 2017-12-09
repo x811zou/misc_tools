@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
    unicode_literals, generators, nested_scopes, with_statement)       
 from builtins import (bytes, dict, int, list, object, range, str, ascii, 
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from NgramIterator import NgramIterator
 
 ######################################################################
 # Attributes:
@@ -15,6 +16,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 # Class Methods:
 #    aaSeq=Translation.translate(nucSeq)
 #    revSeq=Translation.reverseComplement(nucSeq)
+#    hash=Translation.getFourfoldDegenerateCodons()
 # Private methods:
 #    initCodonMap()
 #    initComplementMap()
@@ -63,6 +65,26 @@ class Translation:
         cls.complementMap['Y']='R'
         cls.complementMap['-']='-' # for gaps in alignments
         cls.complementMap['N']='N' ### <------DEBUGGING!
+
+    @classmethod
+    def getFourfoldDegenerateCodons(cls):
+        codonMap=cls.codon
+        alphabet="ACGT"
+        degenerate=set()
+        ngramIterator=NgramIterator(alphabet,2)
+        while(True):
+            pair=ngramIterator.nextString()
+            if(pair is None): break
+            acids=set(); codons=set()
+            for third in alphabet:
+                codon=pair+third
+                acid=codonMap[codon]
+                acids.add(acid)
+                codons.add(codon)
+            if(len(acids)>1): continue
+            for codon in codons: degenerate.add(codon)
+        return degenerate
+            
 
     @classmethod
     def initCodonMap(cls):

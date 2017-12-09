@@ -17,7 +17,7 @@ import re
 # Instance Methods:
 #   reader=FastaReader(filename)
 #   reader=readerFromFileHandle(fileHandle);
-#   [defline,sequence]=reader.nextSequence()
+#   (defline,sequence)=reader.nextSequence()
 #   reader.close()
 #   reader.dontUppercase()
 #   reader.doUppercase()
@@ -26,8 +26,9 @@ import re
 #   num=FastaReader.countEntries(filename)
 #   FastaReader.readAll(filename) # returns hash : id->sequence
 #   FastaReader.readAllAndKeepDefs(filename) # returns hash : id->[def,seq]
+#   FastaReader.readAllIntoArray(filename) # [def,seq]
 #   (defline,seq)=FastaReader.firstSequence(filename)
-#   [id,attribute_hash]=FastaReader.parseDefline(defline)
+#   (id,attribute_hash)=FastaReader.parseDefline(defline)
 #=========================================================================
 class FastaReader:
     """FastaReader"""
@@ -110,7 +111,7 @@ class FastaReader:
         hash={}
         reader=FastaReader(filename)
         while(True):
-            [defline,seq]=reader.nextSequence()
+            (defline,seq)=reader.nextSequence()
             if(not defline): break
             match=re.search("^\s*>(\S+)",defline)
             if(not match): raise Exception("can't parse defline: "+defline)
@@ -118,6 +119,17 @@ class FastaReader:
             hash[id]=seq
         reader.close()
         return hash
+
+    @classmethod
+    def readAllIntoArray(cls,filename):
+        array=[]
+        reader=FastaReader(filename)
+        while(True):
+            (defline,seq)=reader.nextSequence()
+            if(not defline): break
+            array.append([defline,seq])
+        reader.close()
+        return array
 
     @classmethod
     def readAllAndKeepDefs(cls,filename):
