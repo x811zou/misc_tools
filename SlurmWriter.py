@@ -18,12 +18,12 @@ import os
 #   threadsValue : number of CPUs requested
 # Instance Methods:
 #   SlurmWriter()
-#   writer.addCommand(cmd)
-#   writer.nice() # turns on "nice" (sets it to 100 by default)
-#   writer.mem(1500)
-#   writer.threads(16)
-#   writer.setQueue("new,all")
-#   writer.writeArrayScript(slurmDir,jobName,maxParallel,
+#   slurm.addCommand(cmd)
+#   slurm.nice() # turns on "nice" (sets it to 100 by default)
+#   slurm.mem(1500)
+#   slurm.threads(16)
+#   slurm.setQueue("new,all")
+#   slurm.writeArrayScript(slurmDir,jobName,maxParallel,
 #                           additional_SBATCH_lines)
 #=========================================================================
 class SlurmWriter:
@@ -94,6 +94,32 @@ class SlurmWriter:
                      "#SBATCH --array=1-"+str(numJobs)+"%"+str(maxParallel),
                      queue+moreSBATCH+"#",
                      slurmDir+"/command${SLURM_ARRAY_TASK_ID}.sh\n"
+                     ]))
+    def writeScript(self,slurmFile,outFile,jobName,command,moreSBATCH=""):
+        if(moreSBATCH is None): moreSBATCH=""
+        moreSBATCH=moreSBATCH.rstrip()
+        if(len(moreSBATCH)>0):
+            moreSBATCH=moreSBATCH.rstrip()+"\n"
+        if(self.niceValue>0) :
+            moreSBATCH+="#SBATCH --nice="+str(self.niceValue)+"\n"
+        if(self.memValue>0):
+            moreSBATCH+="#SBATCH --mem="+str(self.memValue)+"\n"
+        if(self.threadsValue>0):
+            moreSBATCH+="#SBATCH --cpus-per-task="+str(self.threadsValue)+"\n"
+        queue=""
+        if(len(self.queue)>0):
+            queue="#SBATCH -p "+self.queue+"\n"
+        with open(slurmFile,"w") as OUT:
+            OUT.write("\n".join(
+                    ["#!/bin/sh",
+                     "#",
+                     "#SBATCH --get-user-env",
+                     "#SBATCH -J "+jobName,
+                     "#SBATCH -A "+jobName,
+                     "#SBATCH -o "+outFile,
+                     "#SBATCH -e "+outFile,
+                     queue+moreSBATCH+"#",
+                     command
                      ]))
 
 

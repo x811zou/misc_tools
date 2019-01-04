@@ -13,9 +13,10 @@ import random
 # Attributes:
 #   
 # Instance Methods:
-#   Shuffler()
+#   shuffler=Shuffler()
 # Class Methods:
-#   
+#   Shuffler.shuffleArray(array)
+#   s=Shuffler.shuffleString(s)
 #=========================================================================
 class Shuffler:
     """Shuffler shuffles arrays and strings"""
