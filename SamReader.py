@@ -11,6 +11,7 @@ from Rex import Rex
 rex=Rex()
 import gzip
 from SamRecord import SamRecord
+from CigarString import CigarString
 
 #=========================================================================
 # Attributes:
@@ -43,7 +44,9 @@ class SamReader:
         (ID,flags,refName,refPos,mapQual,cigar,rnext,pnext,templateLen,
          seq,qual)=fields[:11]
         refPos=int(refPos)
-        rec=SamRecord(ID,refName,refPos,cigar,seq)
+        flags=int(flags)
+        CIGAR=CigarString(cigar)
+        rec=SamRecord(ID,refName,refPos,CIGAR,seq,flags)
         return rec
 
 # M03884:303:000000000-C4RM6:1:1101:1776:15706    99      chrX:31786371-31797409  6687    44      150M    =       6813    271     ATACTATTGCTGCGGTAATAACTGTAACTGCAGTTACTATTTAGTGATTTGTATGTAGATGTAGATGTAGTCTATGTCAGACACTATGCTGAGCATTTTATGGTTGCTATGTACTGATACATACAGAAACAAGAGGTACGTTCTTTTACA  BBBBFFFFFFFGGGGGEFGGFGHFHFFFHHHFFHHHFHFHHHGFHEDGGHFHBGFHGBDHFHFFFHHHHFHHHHHGHGFFBGGGHFHFFHHFFFFHHHHGHGFHHGFHGHHHGFHFFHHFHHFFGFFFFGGEHFFEHHFGHHHGHHHHFB  AS:i:300        XN:i:0  
