@@ -27,7 +27,8 @@ import re
 #   tag=node.getTag()
 #   node.changeTag(newTag)
 #   n=node.numElements()
-#   elem=node.getIthElem(i)
+#   elem=node.getIthElem(i) # 0-based, doesn't include the tag
+#   elem=node[i] # 0-based, doesn't include the tag
 #   node.setIthElem(i,dataOrNode)
 #   elem=node.findChild(tag)
 #   array=node.findChildren(tag)
@@ -89,6 +90,9 @@ class EssexNode:
     def numElements(self):
         elements=self.elements
         return len(elements) if elements else 0
+
+    def __getitem__(self,i):
+        return self.elements[i]
 
     def getIthElem(self,i):
         return self.elements[i]
