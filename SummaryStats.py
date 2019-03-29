@@ -17,12 +17,23 @@ import math
 #    [mean,SD,min,max]=SummaryStats.roundedSummaryStats(array)
 #    sum=SummaryStats.sum(array)
 #    r=SummaryStats.correlation(array1,array2)
+#    m=SummaryStats.median(array)
 ######################################################################
 
 class SummaryStats:
     """SummaryStats computes simple mean, variance, and correlation
        statistics
     """
+
+    @classmethod
+    def median(self,array):
+        a=[]
+        for x in array: a.append(x)
+        a.sort()
+        n=len(a)
+        halfN=int(n/2)
+        if(n%2==1): return a[halfN]
+        return (a[halfN-1]+a[halfN])/2
 
     @classmethod
     def summaryStats(self,array):
