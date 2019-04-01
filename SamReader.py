@@ -18,7 +18,7 @@ from CigarString import CigarString
 #   fh : file handle
 # Instance Methods:
 #   reader=SamReader(filename)
-#   [ID,seq,qual]=reader.nextSequence() # returns None at EOF
+#   samRecord=reader.nextSequence() # returns None at EOF
 #   reader.close()
 # Class Methods:
 #=========================================================================
@@ -43,7 +43,7 @@ class SamReader:
         if(len(fields)<11): raise Exception("can't parse sam line: "+line)
         (ID,flags,refName,refPos,mapQual,cigar,rnext,pnext,templateLen,
          seq,qual)=fields[:11]
-        refPos=int(refPos)
+        refPos=int(refPos)-1 # convert 1-based to 0-based
         flags=int(flags)
         CIGAR=CigarString(cigar)
         rec=SamRecord(ID,refName,refPos,CIGAR,seq,flags)

@@ -20,6 +20,7 @@ from DataFrameRow import DataFrameRow
 #   df=DataFrame()
 #   rowNames=df.getRowNames()
 #   colNames=df.getColumnNames()
+#   df.addRow(DataFrameRow)
 #   n=df.nrow()
 #   n=df.ncol()
 #   row=df[index]
@@ -29,12 +30,18 @@ from DataFrameRow import DataFrameRow
 #   header=df.getHeader()
 #   df.hashRowNames()
 #   df.hashColNames()
+#   row=df.getRowI(i)
+#   col=df.getColI(i)
 #   row=df.getRow(rowName) # call hashRowNames() first!
 #   col=df.getColumn(columnName) # call hashColNames() first!
 #   bool=df.rowExists(rowName) # call hashRowNames() first!
 #   bool=df.columnExists(colName) # call hashColNames() first!
+#   newDataFrame=df.subsetColumns(colIndices)
+#   idx=df.addColumn(colName,defaultValue) # returns index of new column
+#   df.print(handle)
+#   array=df.toDataArray()
 # Class methods:
-#   df=DataFrame.readTable(filename,hasHeader=True,hasRowNames=True)
+#   df=DataFrame.readTable(filename,header=False,rowNames=False)
 #=========================================================================
 
 class DataFrame:
@@ -43,6 +50,39 @@ class DataFrame:
       self.matrix=[]
       self.rowHash=None
       self.colHash=None
+
+   def addRow(self,row):
+      self.matrix.append(row)
+
+   def toDataArray(self):
+      array=[]
+      for row in self.matrix:
+         array.append(row.values)
+      return array
+
+   def print(self,handle):
+      print("\t".join(self.header),file=handle)
+      for row in self.matrix: row.print(handle)
+
+   def addColumn(self,name,defaultValue):
+      colIndex=len(self.header)
+      self.header.append(name)
+      for row in self.matrix:
+         row.append(defaultValue)
+      return colIndex
+
+   def subsetColumns(self,colIndices):
+      newDF=DataFrame()
+      header=self.header
+      newHeader=newDF.header
+      for i in colIndices: newHeader.append(header[i])
+      for i in range(self.nrow()):
+         row=self[i]
+         newRow=DataFrameRow()
+         newRow.rename(row.getLabel())
+         for j in colIndices: newRow.values.append(row[j])
+         newDF.matrix.append(newRow)
+      return newDF
 
    def rowExists(self,rowName):
       if(self.rowHash is None): raise Exception("call hashRowNames() first")
@@ -59,7 +99,16 @@ class DataFrame:
       return names
 
    def getColumnNames(self):
-      return header
+      return self.header
+
+   def getRowI(self,rowIndex):
+      return self.matrix[rowIndex]
+
+   def getColumnI(self,colIndex):
+      column=DataFrameRow()
+      for row in self.matrix:
+         column.values.append(row[colIndex])
+      return column
 
    def getRow(self,rowName):
       if(self.rowHash is None): raise Exception("call hashRowNames() first")
@@ -75,6 +124,7 @@ class DataFrame:
       column.label=colName
       for row in self.matrix:
          colum.values.append(row[colIndex])
+      return column
 
    def hashRowNames(self):
       h=self.rowHash={}
@@ -108,17 +158,17 @@ class DataFrame:
       for row in self.matrix: row.toFloat()
 
    @classmethod
-   def readTable(cls,filename,hasHeader=True,hasRowNames=True):
+   def readTable(cls,filename,header=False,rowNames=False):
       df=DataFrame()
       with open(filename,"rt") as IN:
-         if(hasHeader):
+         if(header):
             df.header=IN.readline()
-            df.header=df.header.rstrip().split()
+            df.header=df.header.rstrip().split("\t")
          for line in IN:
-            fields=line.rstrip().split()
+            fields=line.rstrip().split("\t")
             if(len(fields)<1): continue
             label=""
-            if(hasRowNames):
+            if(rowNames):
                label=fields[0]
                fields=fields[1:]
             row=DataFrameRow()

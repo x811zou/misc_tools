@@ -15,8 +15,26 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #   refPos = position in reference where alignment begins
 #   CIGAR = CigarString
 #   seq = read sequence
+#   flags = bitfield
 # Instance Methods:
-#   rec=SamReader(ID,refName,refPos,cigar,seq)
+#   rec=SamReader(ID,refName,refPos,cigar,seq,flags)
+#   ID=rec.getID()
+#   cigar=rec.getCigar()
+#   seq=rec.getSequence()
+#   refName=rec.getRefName()
+#   refPos=rec.getRefPos()
+#   bool=rec.flag_hasMultipleSegments()
+#   bool=rec.flag_properlyAligned()
+#   bool=rec.flag_unmapped()
+#   bool=rec.flag_nextSegmentUnmapped()
+#   bool=rec.flag_revComp()
+#   bool=rec.flag_nextSegmentRevComp()
+#   bool=rec.flag_firstOfPair()
+#   bool=rec.flag_secondOfPair()
+#   bool=rec.flag_secondaryAlignment()
+#   bool=rec.flag_failedFilters()
+#   bool=rec.flag_PCRduplicate()
+#   bool=rec.flag_supplAlignment()
 # Class Methods:
 #=========================================================================
 class SamRecord:
@@ -28,6 +46,21 @@ class SamRecord:
         self.CIGAR=CIGAR
         self.seq=seq
         self.flags=flags
+
+    def getRefName(self):
+        return self.refName
+
+    def getRefPos(self):
+        return self.refPos
+    
+    def getCigar(self):
+        return self.CIGAR
+
+    def getID(self):
+        return self.ID
+
+    def getSequence(self):
+        return self.seq
 
     def flag_hasMultipleSegments(self):
         return bool(self.flags & 0x1)

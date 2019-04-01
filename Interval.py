@@ -15,6 +15,7 @@ import sys
 #   end
 # Methods:
 #   i=Interval(begin,end)
+#   s=interval.toString()
 #   print(file=STDOUT)
 #   bool=interval.overlaps(other)
 #   bool=interval.contains(position)
@@ -48,6 +49,9 @@ class Interval:
 
    def print(self,file=sys.stdout):
       print("(",self.begin,",",self.end,")",sep="",end="",file=file)
+
+   def toString(self):
+      return "("+str(self.begin)+","+str(self.end)+")"
 
    def overlaps(self,other):
       return self.begin<other.end and other.begin<self.end

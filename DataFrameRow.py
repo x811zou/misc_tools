@@ -21,6 +21,8 @@ import sys
 #   n=row.length()
 #   row.toInt()
 #   row.toFloat()
+#   row.append(value)
+#   row.print(handle)
 #=========================================================================
 
 class DataFrameRow:
@@ -30,6 +32,15 @@ class DataFrameRow:
 
    def __getitem__(self,i):
       return self.values[i]
+
+   def __setitem__(self,i,value):
+      self.values[i]=value
+
+   def print(self,handle):
+      print(self.label+"\t","\t".join([str(x) for x in self.values]),sep="")
+
+   def append(self,value):
+      self.values.append(value)
 
    def length(self):
       return len(self.values)

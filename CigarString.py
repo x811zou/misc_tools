@@ -10,6 +10,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 from Rex import Rex
 rex=Rex()
 from CigarOp import CigarOp
+from Interval import Interval
 
 #=========================================================================
 # Attributes:
@@ -19,11 +20,27 @@ from CigarOp import CigarOp
 #   bool=cigar.completeMatch()
 #   numOps=cigar.length()
 #   cigarOp=cigar[i] # returns a CigarOp object
+#   str=cigar.toString()
+#   cigar.computeIntervals(refPos)
 #=========================================================================
 class CigarString:
     """CigarString parses CIGAR strings (alignments)"""
     def __init__(self,cigar):
         self.ops=self.parse(cigar)
+
+    def computeIntervals(self,refPos):
+        ops=self.ops
+        n=len(ops)
+        begin1=0; begin2=refPos
+        for i in range(n):
+            op=ops[i]
+            L=op.getLength()
+            end1=begin1; end2=begin2
+            if(op.advanceInQuery()): end1+=L
+            if(op.advanceInRef()): end2+=L
+            op.interval1=Interval(begin1,end1)
+            op.interval2=Interval(begin2,end2)
+            begin1=end1; begin2=end2
 
     def length(self):
         return len(self.ops)
