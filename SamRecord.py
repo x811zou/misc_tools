@@ -7,6 +7,8 @@ from __future__ import (absolute_import, division, print_function,
    unicode_literals, generators, nested_scopes, with_statement)
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
+from Rex import Rex
+rex=Rex()
 
 #=========================================================================
 # Attributes:
@@ -16,13 +18,17 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #   CIGAR = CigarString
 #   seq = read sequence
 #   flags = bitfield
+#   tags = array of tags at end of record (MD:Z:122G25, NM:i:1, etc.)
 # Instance Methods:
-#   rec=SamReader(ID,refName,refPos,cigar,seq,flags)
+#   rec=SamRecord(ID,refName,refPos,cigar,seq,flags,tags)
 #   ID=rec.getID()
-#   cigar=rec.getCigar()
+#   cigar=rec.getCigar() # returns CigarString object
 #   seq=rec.getSequence()
 #   refName=rec.getRefName()
 #   refPos=rec.getRefPos()
+#   tags=rec.getTags()
+#   fields=rec.parseMDtag()
+#   tag=getTag("MD") # returns the third field, e.g. "122G25" in MD:Z:122G25
 #   bool=rec.flag_hasMultipleSegments()
 #   bool=rec.flag_properlyAligned()
 #   bool=rec.flag_unmapped()
@@ -39,13 +45,41 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #=========================================================================
 class SamRecord:
     """SamRecord"""
-    def __init__(self,ID,refName,refPos,CIGAR,seq,flags):
+    def __init__(self,ID,refName,refPos,CIGAR,seq,flags,tags):
         self.ID=ID
         self.refName=refName
         self.refPos=refPos
         self.CIGAR=CIGAR
         self.seq=seq
         self.flags=flags
+        self.tags=tags
+
+    def getTags(self):
+        return self.tags
+
+    def getTag(self,label):
+        for tag in self.tags:
+            if(not rex.find("^([^:]+):[^:]+:(\S+)",tag)):
+                raise Exception("Can't parse SAM tag: "+tag)
+            if(rex[1]==label): return rex[2]
+        return None
+
+    def parseMDtag(self):
+        md=self.getTag("MD")
+        fields=[]
+        while(len(md)>0):
+            if(rex.find("^(\d+)(.*)",md)):
+                fields.append(rex[1])
+                md=rex[2]
+            elif(rex.find("^([ACGT])(.*)",md)):
+                fields.append(rex[1])
+                md=rex[2]
+            elif(rex.find("^(\^[ACGT]+)(.*)",md)):
+                fields.append(rex[1])
+                md=rex[2]
+            else:
+                raise Exception("Can't parse MD tag: "+md)
+        return fields
 
     def getRefName(self):
         return self.refName

@@ -22,6 +22,10 @@ from Interval import Interval
 #   cigarOp=cigar[i] # returns a CigarOp object
 #   str=cigar.toString()
 #   cigar.computeIntervals(refPos)
+#   op=cigar.longestMatch() # returns a CigarOp object (or None)
+#   L=cigar.longestMatchLen() # returns integer
+#   (numMatches,numMismatches)=cigar.longestMatchStats(seq1,seq2) # None if no match
+#                              ^ must call computeIntervals() first!
 #=========================================================================
 class CigarString:
     """CigarString parses CIGAR strings (alignments)"""
@@ -51,6 +55,33 @@ class CigarString:
     def completeMatch(self):
         ops=self.ops
         return len(ops)==1 and ops[0].op=="M"
+
+    def longestMatchStats(self,query,ref):
+        m=self.longestMatch()
+        if(m is None): return None
+        sub1=query[m.interval1.getBegin():m.interval1.getEnd()]
+        sub2=ref[m.interval2.getBegin():m.interval2.getEnd()]
+        matches=0; mismatches=0
+        for i in range(len(sub1)):
+            if(sub1[i]==sub2[i]): matches+=1
+            else: mismatches+=1
+        return (matches,mismatches)
+
+    def longestMatchLen(self):
+        m=self.longestMatch()
+        if(m is None): return 0
+        return m.getLength()
+
+    def longestMatch(self):
+        longest=None
+        longestLength=0
+        for op in self.ops:
+            if(op.getOp()=="M"):
+                L=op.getLength()
+                if(L>longestLength):
+                    longest=op
+                    longestLength=L
+        return longest
 
     def toString(self):
         ops=self.ops

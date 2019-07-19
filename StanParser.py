@@ -19,10 +19,12 @@ rex=Rex()
 #    
 # Methods:
 #    parser=StanParser(filename)
-#    samples=parser.getSamples(self):
-#    varNames=parser.getVarNames(self):
-#    var=parser.getVariable(self,name):
+#    samples=parser.getSamples()
+#    varNames=parser.getVarNames()
+#    var=parser.getVariable(name)
 #    (median,mean,SD,min,max)=parser.getSummary(var)
+#    (CI_left,CI_right)=parser.getCredibleInterval(0.95,variableName)
+#    (median,CI_left,CI_right)=parser.getMedianAndCI(0.95,variableName)
 ######################################################################
 
 class StanParser:
@@ -31,6 +33,25 @@ class StanParser:
         self.varNames=[]
         self.varIndex={}
         self.parse(filename)
+
+    def getCredibleInterval(self,percent,name):
+        samples=self.getVariable(name)
+        n=len(samples)
+        half=(1.0-percent)/2.0
+        samples.sort(key=lambda x: x)
+        CI_left=samples[int(half*n)]
+        CI_right=samples[n-int(half*n)]
+        return (CI_left,CI_right)
+
+    def getMedianAndCI(self,percent,name):
+        samples=self.getVariable(name)
+        n=len(samples)
+        half=(1.0-percent)/2.0
+        samples.sort(key=lambda x: x)
+        CI_left=samples[int(half*n)]
+        CI_right=samples[n-int(half*n)]
+        median=SummaryStats.median(samples)
+        return (median,CI_left,CI_right)
 
     def parse(self,filename):
         with open(filename,"rt") as IN:
@@ -48,7 +69,6 @@ class StanParser:
     def parseVarNames(self,fields):
         self.varNames=fields[7:]
         for i in range(len(self.varNames)):
-            #print("setting",i,self.varNames[i])
             self.varIndex[self.varNames[i]]=i
 
     def parseSample(self,fields):
@@ -76,3 +96,4 @@ class StanParser:
         med=SummaryStats.median(v)
         (mean,SD,min,max)=SummaryStats.summaryStats(v)
         return (med,mean,SD,min,max)
+

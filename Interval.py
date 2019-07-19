@@ -8,6 +8,8 @@ from __future__ import (absolute_import, division, print_function,
 from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 import sys
+from Rex import Rex
+rex=Rex()
 
 #=========================================================================
 # Attributes:
@@ -21,6 +23,7 @@ import sys
 #   bool=interval.contains(position)
 #   bool=interval.containsInterval(other)
 #   distance=interval.distance(other)
+#   distance=interval.distanceFromPoint(x)
 #   intersection=interval.intersect(other)
 #   union=interval.union(other) # returns an array of intervals
 #   diff=interval.minus(other)  # returns an array of intervals
@@ -37,6 +40,9 @@ import sys
 #   center=interval.floatCenter()
 #   center=interval.intCenter()
 #   center=interval.center() # same as floatCenter()
+# Class methods:
+#   interval=Interval.parseInt("(10,15)")
+#   interval=Interval.parseFloat("(3.5,7.2)")
 #=========================================================================
 
 class Interval:
@@ -47,6 +53,22 @@ class Interval:
       self.begin=begin
       self.end=end
 
+   @classmethod
+   def parseInt(cls,interval):
+      if(rex.find("\(([^,]+),([^\)]+)\)",interval)):
+         return Interval(int(rex[1]),int(rex[2]))
+      if(rex.find("([^,]+):([^\)]+)",interval)):
+         return Interval(int(rex[1]),int(rex[2]))
+      if(rex.find("([^,]+)-([^\)]+)",interval)):
+         return Interval(int(rex[1]),int(rex[2]))
+      return None
+
+   @classmethod
+   def parseFloat(cls,interval):
+      if(rex.find("\(([^,]+),([^\)]+)\)",interval)):
+         return Interval(float(rex[1]),float(rex[2]))
+      return None
+
    def print(self,file=sys.stdout):
       print("(",self.begin,",",self.end,")",sep="",end="",file=file)
 
@@ -55,6 +77,12 @@ class Interval:
 
    def overlaps(self,other):
       return self.begin<other.end and other.begin<self.end
+
+   def distanceFromPoint(self,x):
+      if(self.contains(x)): return 0
+      d1=abs(self.begin-x)
+      d2=abs(self.end-x)
+      return d1 if d1<d2 else d2
 
    def distance(self,other):
       if(self.overlaps(other)): return 0

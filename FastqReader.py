@@ -16,7 +16,7 @@ import gzip
 #   fh : file handle
 # Instance Methods:
 #   reader=FastqReader(filename)
-#   [ID,seq,qual]=reader.nextSequence() # returns None at EOF
+#   (ID,seq,qual,pair)=reader.nextSequence() # returns None at EOF
 #   reader.close()
 # Class Methods:
 #=========================================================================
@@ -44,7 +44,7 @@ class FastqReader:
         seq=fh.readline().rstrip()
         junk=fh.readline()
         qual=fh.readline().rstrip()
-        return [ID,seq,qual,pair]
+        return (ID,seq,qual,pair)
         
 
 

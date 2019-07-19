@@ -24,6 +24,7 @@ from DataFrameRow import DataFrameRow
 #   n=df.nrow()
 #   n=df.ncol()
 #   row=df[index]
+#   rows=df.getRows()
 #   elem=df[i][j]
 #   df.toInt()
 #   df.toFloat()
@@ -36,6 +37,7 @@ from DataFrameRow import DataFrameRow
 #   col=df.getColumn(columnName) # call hashColNames() first!
 #   bool=df.rowExists(rowName) # call hashRowNames() first!
 #   bool=df.columnExists(colName) # call hashColNames() first!
+#   index=df.getColumnIndex(colName) # call hashColNames() first!
 #   newDataFrame=df.subsetColumns(colIndices)
 #   idx=df.addColumn(colName,defaultValue) # returns index of new column
 #   df.print(handle)
@@ -53,6 +55,9 @@ class DataFrame:
 
    def addRow(self,row):
       self.matrix.append(row)
+
+   def getRows(self):
+      return self.matrix
 
    def toDataArray(self):
       array=[]
@@ -88,6 +93,9 @@ class DataFrame:
       if(self.rowHash is None): raise Exception("call hashRowNames() first")
       return self.rowHash.get(rowName,None) is not None
 
+   def getColumnIndex(self,colName):
+      return self.colHash.get(colName)
+
    def columnExists(self,colName):
       if(self.colHash is None): raise Exception("call hashColNames() first")
       return self.colHash.get(colName,None) is not None
@@ -104,7 +112,7 @@ class DataFrame:
    def getRowI(self,rowIndex):
       return self.matrix[rowIndex]
 
-   def getColumnI(self,colIndex):
+   def getColI(self,colIndex):
       column=DataFrameRow()
       for row in self.matrix:
          column.values.append(row[colIndex])
@@ -123,7 +131,7 @@ class DataFrame:
       column=DataFrameRow()
       column.label=colName
       for row in self.matrix:
-         colum.values.append(row[colIndex])
+         column.values.append(row[colIndex])
       return column
 
    def hashRowNames(self):
@@ -137,7 +145,7 @@ class DataFrame:
       h=self.colHash={}
       numCols=self.ncol()
       for i in range(numCols):
-         h[header[i]]=i
+         h[self.header[i]]=i
 
    def getHeader(self):
       return self.header
