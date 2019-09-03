@@ -28,6 +28,7 @@ from DataFrameRow import DataFrameRow
 #   elem=df[i][j]
 #   df.toInt()
 #   df.toFloat()
+#   df.colToFloat(colIndex)
 #   header=df.getHeader()
 #   df.hashRowNames()
 #   df.hashColNames()
@@ -161,6 +162,9 @@ class DataFrame:
 
    def toInt(self):
       for row in self.matrix: row.toInt()
+
+   def colToFloat(self,colIndex):
+      for row in self.matrix: row[colIndex]=float(row[colIndex])
 
    def toFloat(self):
       for row in self.matrix: row.toFloat()

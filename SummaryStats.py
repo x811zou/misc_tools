@@ -31,6 +31,7 @@ class SummaryStats:
         for x in array: a.append(x)
         a.sort()
         n=len(a)
+        if(n<1): raise Exception("median is undefined for 0 elements")
         halfN=int(n/2)
         if(n%2==1): return a[halfN]
         return (a[halfN-1]+a[halfN])/2
