@@ -17,18 +17,30 @@ import sys
 #   row=DataFrameRow()
 #   elem=row[i] # first element is at 0 (the label is not counted)
 #   label=row.getLabel()
+#   raw=raw.getRaw()
 #   row.rename(label)
 #   n=row.length()
 #   row.toInt()
 #   row.toFloat()
 #   row.append(value)
 #   row.print(handle)
+#   newRow=row.clone()
 #=========================================================================
 
 class DataFrameRow:
    def __init__(self):
       self.label=""
       self.values=[]
+
+   def getRaw(self):
+      return self.values
+
+   def clone(self):
+      r=DataFrameRow()
+      r.label=self.label
+      for x in self.values:
+         r.values.append(x)
+      return r
 
    def __getitem__(self,i):
       return self.values[i]
@@ -37,7 +49,8 @@ class DataFrameRow:
       self.values[i]=value
 
    def print(self,handle):
-      print(self.label+"\t","\t".join([str(x) for x in self.values]),sep="")
+      if(self.label!=""): print(self.label+"\t",end="",file=handle)
+      print("\t".join([str(x) for x in self.values]),sep="",file=handle)
 
    def append(self,value):
       self.values.append(value)

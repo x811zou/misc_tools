@@ -28,6 +28,8 @@ from EssexToken import EssexToken
 #   parser.close()
 #   tree=parser.nextElem()   # returns root of the tree
 #   forest=parser.parseAll() # returns an array of trees
+# Class methods:
+#   forest=EssexParser.loadFile(filename) # returns array of trees
 ######################################################################
 
 class EssexParser:
@@ -56,6 +58,11 @@ class EssexParser:
             if(not tree): break
             forest.append(tree)
         return forest
+
+    @classmethod
+    def loadFile(cls,filename):
+        parser=EssexParser(filename)
+        return parser.parseAll()
 
     def nextElem(self):
         if(not self.isOpen): raise Exception("file is not open")

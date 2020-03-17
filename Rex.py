@@ -28,6 +28,13 @@ class Rex:
         self.match=re.search(pattern,line)
         return self.match is not None
 
+    def split(self,pattern,line):
+        fields=re.split(pattern,line)
+        nonEmpty=[]
+        for x in fields:
+            if(x!=""): nonEmpty.append(x)
+        return nonEmpty
+
     def findOrDie(self,pattern,line):
         if(not self.find(pattern,line)): raise Exception("can't parse: "+line)
 

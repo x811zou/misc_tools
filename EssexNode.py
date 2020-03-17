@@ -32,6 +32,7 @@ import re
 #   node.setIthElem(i,dataOrNode)
 #   elem=node.findChild(tag)
 #   array=node.findChildren(tag)
+#   node.dropChild(i)
 #   array=node.findDescendents(tag) # always returns an array
 #   elem=node.findDescendent(tag) # returns node or undef
 #   bool=node.hasDescendentOrDatum(tagOrDatum)
@@ -69,6 +70,9 @@ class EssexNode:
         else:
             self.tag=""
             self.elements=[]
+
+    def dropChild(self,i):
+        del self.elements[i]
 
     def addElem(self,elem):
         self.elements.append(elem)

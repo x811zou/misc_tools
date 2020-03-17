@@ -22,15 +22,23 @@ from Interval import Interval
 #   cigarOp=cigar[i] # returns a CigarOp object
 #   str=cigar.toString()
 #   cigar.computeIntervals(refPos)
+#   ops=cigar.matchesByLength() # sorted by decreasing length
 #   op=cigar.longestMatch() # returns a CigarOp object (or None)
 #   L=cigar.longestMatchLen() # returns integer
-#   (numMatches,numMismatches)=cigar.longestMatchStats(seq1,seq2) # None if no match
-#                              ^ must call computeIntervals() first!
+#   (numMatches,numMismatches)=cigar.longestMatchStats(seq1,seq2) 
+#       # ^ Returns none if no match; must call computeIntervals() first!
 #=========================================================================
 class CigarString:
     """CigarString parses CIGAR strings (alignments)"""
     def __init__(self,cigar):
         self.ops=self.parse(cigar)
+
+    def matchesByLength(self):
+        matches=[]
+        for op in self.ops:
+            if(op.getOp() in ("M","=","X")): matches.append(op)
+        matches.sort(key=lambda x: -x.getLength())
+        return matches
 
     def computeIntervals(self,refPos):
         ops=self.ops
@@ -54,7 +62,7 @@ class CigarString:
         
     def completeMatch(self):
         ops=self.ops
-        return len(ops)==1 and ops[0].op=="M"
+        return len(ops)==1 and ops[0].op in ("M","=","X")
 
     def longestMatchStats(self,query,ref):
         m=self.longestMatch()
@@ -76,7 +84,7 @@ class CigarString:
         longest=None
         longestLength=0
         for op in self.ops:
-            if(op.getOp()=="M"):
+            if(op.getOp()in ("M","=","X")):
                 L=op.getLength()
                 if(L>longestLength):
                     longest=op

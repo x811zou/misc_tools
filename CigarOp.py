@@ -17,7 +17,7 @@ ADVANCE_REF=set(["M","D","N","=","X"])
 #   length : integer
 #   interval1 : Interval (in sequence 1 = query)
 #   interval2 : Interval (in sequence 2 = reference)
-#   op : M/I/D/S:
+#   op : M(or =/X)/I/D/S:
 #                                                              consumes
 #                                                              query ref
 #     M 0 alignment match (can be a sequence match or mismatch) yes yes
@@ -35,12 +35,21 @@ ADVANCE_REF=set(["M","D","N","=","X"])
 #   bool=op.advanceInRef() # matches, deletions, etc.
 #   op=op.getOp()
 #   L=op.getLength()
+#   interval=op.getQueryInterval() # sequence 1
+#   interval=op.getRefInterval() # sequence 2
 #=========================================================================
 class CigarOp:
     def __init__(self,op,L):
         self.op=op
         self.length=L
-        self.interval=None
+        self.interval1=None
+        self.interval2=None
+
+    def getQueryInterval(self):
+        return self.interval1
+
+    def getRefInterval(self):
+        return self.interval2
 
     def getOp(self): 
         return self.op

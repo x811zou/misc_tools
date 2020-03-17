@@ -15,8 +15,11 @@ import gzip
 # Attributes:
 #   fh : file handle
 # Instance Methods:
-#   reader=FastqReader(filename)
-#   (ID,seq,qual,pair)=reader.nextSequence() # returns None at EOF
+#   reader=FastqReader(filename) # can be gzipped!
+#   (ID,seq,qual,qualSeq,pair)=reader.nextSequence() # returns None at EOF
+#        * pair indicates which read of the pair: 1 or 2
+#        * qual is an array of integer quality values
+#        * qualSeq is the raw quality string
 #   reader.close()
 # Class Methods:
 #=========================================================================
@@ -43,8 +46,9 @@ class FastqReader:
         if(rex.find("\s+(\d)",line)): pair=int(rex[1])
         seq=fh.readline().rstrip()
         junk=fh.readline()
-        qual=fh.readline().rstrip()
-        return (ID,seq,qual,pair)
+        qualSeq=fh.readline().rstrip()
+        qual=[ord(x)-33 for x in qualSeq]
+        return (ID,seq,qual,qualSeq,pair)
         
 
 

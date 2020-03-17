@@ -17,7 +17,7 @@ import re
 # Instance Methods:
 #   reader=FastaReader(filename)
 #   reader=readerFromFileHandle(fileHandle);
-#   (defline,sequence)=reader.nextSequence()
+#   (defline,sequence)=reader.nextSequence() # returns None at eof
 #   reader.close()
 #   reader.dontUppercase()
 #   reader.doUppercase()
@@ -63,7 +63,7 @@ class FastaReader:
             else:
                 line=fh.readline()
                 if(line): line=line.rstrip()
-            if(not line): return [None,None]
+            if(not line): return None # [None,None]
             if(re.search("^\s*>",line)):
                 defline=line
                 while(True):
@@ -111,7 +111,9 @@ class FastaReader:
         hash={}
         reader=FastaReader(filename)
         while(True):
-            (defline,seq)=reader.nextSequence()
+            rec=reader.nextSequence()
+            if(rec is None): break
+            (defline,seq)=rec
             if(not defline): break
             match=re.search("^\s*>(\S+)",defline)
             if(not match): raise Exception("can't parse defline: "+defline)

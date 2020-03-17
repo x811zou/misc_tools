@@ -18,6 +18,7 @@ from DataFrameRow import DataFrameRow
 #   colHash : dictionary mapping column names to column indices
 # Methods:
 #   df=DataFrame()
+#   df.save(filename)
 #   rowNames=df.getRowNames()
 #   colNames=df.getColumnNames()
 #   df.addRow(DataFrameRow)
@@ -40,9 +41,11 @@ from DataFrameRow import DataFrameRow
 #   bool=df.columnExists(colName) # call hashColNames() first!
 #   index=df.getColumnIndex(colName) # call hashColNames() first!
 #   newDataFrame=df.subsetColumns(colIndices)
+#   newDataFrame=df.subsetRows(rowIndices)
 #   idx=df.addColumn(colName,defaultValue) # returns index of new column
 #   df.print(handle)
 #   array=df.toDataArray()
+#   df.appendDF(otherDF) # does NOT do a deep copy!
 # Class methods:
 #   df=DataFrame.readTable(filename,header=False,rowNames=False)
 #=========================================================================
@@ -53,6 +56,13 @@ class DataFrame:
       self.matrix=[]
       self.rowHash=None
       self.colHash=None
+
+   def save(self,filename):
+      with open(filename,"wt") as OUT:
+         self.print(OUT)
+
+   def appendDF(self,other):
+      self.matrix.extend(other.matrix)
 
    def addRow(self,row):
       self.matrix.append(row)
@@ -88,6 +98,13 @@ class DataFrame:
          newRow.rename(row.getLabel())
          for j in colIndices: newRow.values.append(row[j])
          newDF.matrix.append(newRow)
+      return newDF
+
+   def subsetRows(self,rowIndices):
+      newDF=DataFrame()
+      newDF.header=self.header
+      for i in rowIndices: 
+         newDF.addRow(self[i].clone())
       return newDF
 
    def rowExists(self,rowName):
@@ -175,9 +192,9 @@ class DataFrame:
       with open(filename,"rt") as IN:
          if(header):
             df.header=IN.readline()
-            df.header=df.header.rstrip().split("\t")
+            df.header=df.header.rstrip().split() #("\t")
          for line in IN:
-            fields=line.rstrip().split("\t")
+            fields=line.rstrip().split() #("\t")
             if(len(fields)<1): continue
             label=""
             if(rowNames):
