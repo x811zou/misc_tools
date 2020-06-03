@@ -16,6 +16,7 @@ import sys
 # Instance Methods:
 #   pipe=Pipe(command)
 #   line=pipe.readline()
+# Class Methods:
 #   output=Pipe.run(command)
 #=========================================================================
 class Pipe:

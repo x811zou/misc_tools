@@ -25,6 +25,8 @@ rex=Rex()
 #    (median,mean,SD,min,max)=parser.getSummary(var)
 #    (CI_left,CI_right)=parser.getCredibleInterval(0.95,variableName)
 #    (median,CI_left,CI_right)=parser.getMedianAndCI(0.95,variableName)
+#    P=parser.getLeftTail(variableName,value)
+#    P=parser.getRightTail(variableName,value)
 ######################################################################
 
 class StanParser:
@@ -43,6 +45,20 @@ class StanParser:
         CI_right=samples[n-int(half*n)]
         return (CI_left,CI_right)
 
+    def getLeftTail(self,name,value):
+        samples=self.getVariable(name)
+        count=0
+        for x in samples:
+            if(x<value): count+=1
+        return float(count)/float(len(samples))
+
+    def getRightTail(self,name,value):
+        samples=self.getVariable(name)
+        count=0
+        for x in samples:
+            if(x>value): count+=1
+        return float(count)/float(len(samples))
+
     def getMedianAndCI(self,percent,name):
         samples=self.getVariable(name)
         n=len(samples)
@@ -58,23 +74,36 @@ class StanParser:
             return self.parseFile(IN)
 
     def parseFile(self,IN):
+        firstIndex=None
         for line in IN:
             if(len(line)<1): continue
             if(line[0]=="#"): continue
             fields=line.rstrip().split(",")
             if(len(fields)<1): continue
-            if(fields[0]=="lp__"): self.parseVarNames(fields)
-            else: self.parseSample(fields)
+            if(fields[0]=="lp__"): 
+                firstIndex=self.getFirstVariableIndex(fields)
+                self.parseVarNames(fields,firstIndex)
+            else: self.parseSample(fields,firstIndex)
 
-    def parseVarNames(self,fields):
-        self.varNames=fields[7:]
+    def getFirstVariableIndex(self,fields):
+        for i in range(len(fields)):
+            field=fields[i]
+            L=len(field)
+            lastChar=field[L-1]
+            if(lastChar!="_"): return i
+        return -1
+
+    def parseVarNames(self,fields,firstIndex):
+        self.varNames=fields[firstIndex:]
+        #print("firstIndex=",firstIndex,"names=",self.varNames)
         for i in range(len(self.varNames)):
             self.varIndex[self.varNames[i]]=i
 
-    def parseSample(self,fields):
-        sample=fields[7:]
+    def parseSample(self,fields,firstIndex):
+        sample=fields[firstIndex:]
         for i in range(len(sample)):
             sample[i]=float(sample[i])
+            #print("sample=",sample[i],"firstIndex=",firstIndex)
         self.samples.append(sample)
 
     def getSamples(self):

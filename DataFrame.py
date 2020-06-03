@@ -172,7 +172,9 @@ class DataFrame:
       return len(self.matrix)
 
    def ncol(self):
-      return len(self.header)
+      if(len(self.header)!=0): return len(self.header)
+      if(len(self.matrix)==0): return 0
+      return self.matrix[0].length()
 
    def __getitem__(self,i):
       return self.matrix[i]

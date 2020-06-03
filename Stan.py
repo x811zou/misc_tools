@@ -17,7 +17,14 @@ import os
 #    
 # Methods:
 #    stan=Stan(model)
-#    stan.run(numWarmup,numSamples,inputFile,outputFile,stderrFile,initFile=None):
+#    stan.run(numWarmup,numSamples,inputFile,outputFile,stderrFile,
+#         initFile=None):
+#    stan.variational(numSamples,inputFile,outputFile,stderrFile,
+#         initFile=None):
+#    cmd=stan.getCmd(numWarmup,numSamples,inputFile,outputFile,
+#         stderrFile,initFile=None)
+#    cmd=stan.getVarCmd(numSamples,inputFile,outputFile,
+#         stderrFile,initFile=None)
 #    stan.writeOneDimArray(name,array,dim,OUT):
 #    stan.writeTwoDimArray(name,array,firstDim,secondDim,OUT):
 #    stan.writeThreeDimArray(name,array,firstDim,secondDim,thirdDim,OUT):
@@ -82,11 +89,24 @@ class Stan:
         cmd=self.getCmd(numWarmup,numSamples,inputFile,outputFile,stderrFile,initFile)
         os.system(cmd)
 
+    def variational(self,numSamples,inputFile,outputFile,stderrFile,initFile=None):
+        cmd=self.getVarCmd(numSamples,inputFile,outputFile,stderrFile,initFile)
+        os.system(cmd)
+
     def getCmd(self,numWarmup,numSamples,inputFile,outputFile,stderrFile,initFile=None):
         init=" init="+initFile if initFile is not None else ""
         cmd=self.model+" sample thin=1"+\
             " num_samples="+str(numSamples)+\
             " num_warmup="+str(numWarmup)+\
+            " data file="+inputFile+\
+            init+\
+            " output file="+outputFile+" refresh=0 > "+stderrFile
+        return cmd
+
+    def getVarCmd(self,numSamples,inputFile,outputFile,stderrFile,initFile=None):
+        init=" init="+initFile if initFile is not None else ""
+        cmd=self.model+" variational "+\
+            " output_samples="+str(numSamples)+\
             " data file="+inputFile+\
             init+\
             " output file="+outputFile+" refresh=0 > "+stderrFile
