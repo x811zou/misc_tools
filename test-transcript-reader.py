@@ -15,9 +15,21 @@ from GffTranscriptReader import GffTranscriptReader
 #filename="/home/bmajoros/1000G/assembly/local-genes.gff"
 #filename="/home/bmajoros/1000G/assembly/tmp.gff"
 #filename="test/data/tmp.gff"
-filename="test/data/local-genes.gff"
+#filename="test/data/local-genes.gff"
+filename="/home/bmajoros/ensembl/protein-coding.gff"
 
 reader=GffTranscriptReader()
+genes=reader.loadGenes(filename)
+for gene in genes:
+    exons=gene.getMergedExons()
+    unmerged=0
+    for transcript in gene.transcripts:
+        unmerged+=len(transcript.getRawExons())
+    print(unmerged,"exons merged to",len(exons))
+    #for i in range(len(exons)):
+    #    print("MERGED TO:",exons[i].begin,exons[i].end)
+    #    print()
+
 #transcripts=reader.loadGFF(filename)
 #for transcript in transcripts:
     #print(transcript.getID())
@@ -49,8 +61,8 @@ reader=GffTranscriptReader()
 #for key in keys:
 #    print(key)
 
-hashTable=reader.loadGeneIdHash(filename)
-keys=hashTable.keys()
-for key in keys:
-    print(key)
+#hashTable=reader.loadGeneIdHash(filename)
+#keys=hashTable.keys()
+#for key in keys:
+#    print(key)
 

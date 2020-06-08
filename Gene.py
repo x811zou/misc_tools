@@ -30,6 +30,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #   strand=gene.getStrand()
 #   substrate=gene.getSubstrate()
 #   gff=gene.toGff()
+#   exons=gene.getMergedExons()
 #   
 ######################################################################
 
@@ -37,6 +38,27 @@ class Gene:
     def __init__(self):
         self.transcripts=[]
         self.transcriptHash={}
+
+    def getMergedExons(self):
+        transcripts=self.transcripts
+        exons=[]
+        for transcript in transcripts:
+            raw=transcript.getRawExons()
+            exons.extend(raw)
+            #print("RAW:",len(raw))
+            #for i in range(len(raw)):
+                #print("\t",raw[i].begin,raw[i].end)
+            #print()
+        exons.sort(key=lambda x: x.begin)
+        n=len(exons)
+        i=0
+        while(i<n-1):
+            if(exons[i].overlaps(exons[i+1])):
+                exons[i].end=max(exons[i].end,exons[i+1].end)
+                del exons[i+1]
+                n-=1
+            else: i+=1
+        return exons
 
     def getStrand(self):
         transcripts=self.transcripts
