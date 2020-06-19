@@ -63,6 +63,8 @@ class MatrixMarket:
         while(True):
             fields=line.rstrip().split()
             if(prevID is None): prevID=int(fields[colIndex])
+            if(colIndex>len(fields)-1):
+                raise Exception("colIndex=",colIndex,"len(fields)=",len(fields))
             thisID=int(fields[colIndex])
             if(thisID!=prevID):
                 self.nextLine=line
