@@ -21,6 +21,9 @@ class SamHspClusterer:
     def __init__(self):
         pass
 
+    # One flaw in this function is that if multiple HSPs have the same score,
+    # it will arbitrarily keep one of them, whereas we should probably discard
+    # the entire read due to ambiguous alignment
     @classmethod
     def cluster(cls,raw):
         HSPs=[x for x in raw]
@@ -30,6 +33,8 @@ class SamHspClusterer:
         i=0
         while(i<n-1):
             while(HSPs[i].overlapsOnRead(HSPs[i+1])):
+                #print("OVERLAP:",HSPs[i].toString(),HSPs[i+1].toString(),
+                #      sep="\t")
                 if(HSPs[i].getScore()<HSPs[i+1].getScore()):
                     del HSPs[i]
                 else:

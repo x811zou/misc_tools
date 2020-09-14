@@ -33,7 +33,7 @@ class SamHspFactory:
             cigar=read.getCigar()
             cigar.computeIntervals(read.getRefPos())
             cigar=self.processCigar(cigar)
-            hsp=SamHSP(read)
+            hsp=SamHSP(read,cigar)
             HSPs.append(hsp)
         return HSPs
 

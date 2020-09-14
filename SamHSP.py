@@ -19,7 +19,7 @@ from Interval import Interval
 #   score : float
 #   rec : the SamRecord this HSP came from
 # Instance Methods:
-#   hsp=SamHSP(rec) # rec is a SamRecord
+#   hsp=SamHSP(rec,cigar) # rec is a SamRecord
 #   cigar=hsp.getCigar() # returns CigarString object
 #   refName=hsp.getRefName()
 #   boolean=hsp.overlapsOnRead(otherHSP)
@@ -28,6 +28,7 @@ from Interval import Interval
 #   interval=hsp.getRefInterval() # returns Interval object
 #   hsp.computeScore()
 #   score=hsp.getScore()
+#   str=hsp.toString()
 # Private Methods:
 #   self.computeIntervals()
 # Class Methods:
@@ -35,12 +36,16 @@ from Interval import Interval
 #=========================================================================
 class SamHSP:
     """SamHSP"""
-    def __init__(self,rec):
-        self.cigar=rec.getCigar()
+    def __init__(self,rec,cigar):
+        self.cigar=cigar
         self.refName=rec.getRefName()
         self.rec=rec
         self.computeIntervals()
         self.score=None
+
+    def toString(self):
+        return self.refName+"|"+self.cigar.toString()+"|"+\
+            self.readInterval.toString()+"|"+str(self.score)
 
     def getScore(self):
         return self.score
