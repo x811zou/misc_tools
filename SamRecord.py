@@ -9,6 +9,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from Rex import Rex
 rex=Rex()
+from SamMDtagParser import SamMDtagParser
 
 #=========================================================================
 # Attributes:
@@ -28,6 +29,7 @@ rex=Rex()
 #   refPos=rec.getRefPos()
 #   tags=rec.getTags()
 #   fields=rec.parseMDtag()
+#   N=rec.countMismatches() # uses MD tag
 #   tag=getTag("MD") # returns the third field, e.g. "122G25" in MD:Z:122G25
 #   bool=rec.flag_hasMultipleSegments()
 #   bool=rec.flag_properlyAligned()
@@ -64,9 +66,14 @@ class SamRecord:
             if(rex[1]==label): return rex[2]
         return None
 
+    def countMismatches(self):
+        N=SamMDtagParser.countMismatches(self.parseMDtag())
+        return N
+
     def parseMDtag(self):
         md=self.getTag("MD")
         fields=[]
+        if(md is None): return None
         while(len(md)>0):
             if(rex.find("^(\d+)(.*)",md)):
                 fields.append(rex[1])

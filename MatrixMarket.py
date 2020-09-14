@@ -19,7 +19,7 @@ rex=Rex()
 #=========================================================================
 # Attributes:
 #    FH : file handle
-#    header : array of string
+#    header : array of int
 #    nextLine : string
 # Instance Methods:
 #    MatrixMarket(filename)
@@ -62,6 +62,7 @@ class MatrixMarket:
             prevID=int(self.nextLine.rstrip().split()[colIndex])
         while(True):
             fields=line.rstrip().split()
+            if(len(fields)==0): return None
             if(prevID is None): prevID=int(fields[colIndex])
             if(colIndex>len(fields)-1):
                 raise Exception("colIndex=",colIndex,"len(fields)=",len(fields))

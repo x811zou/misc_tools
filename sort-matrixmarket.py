@@ -41,10 +41,8 @@ IN.close(); OUT.close()
 
 cmd="cat "+infile+" | gunzip | tail -n +"+str(numHeader+1)+\
     " | sort -g -k "+index+" > "+SORTEDFILE
-print(cmd) ###
 Pipe.run(cmd)
 cmd="cat "+HEADERFILE+" "+SORTEDFILE+" | gzip > "+outfile
-print(cmd) ###
 Pipe.run(cmd)
 Pipe.run("rm "+SORTEDFILE)
 Pipe.run("rm "+HEADERFILE)

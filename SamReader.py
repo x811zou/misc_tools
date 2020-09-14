@@ -42,10 +42,11 @@ class SamReader:
         return rec
 
     def nextSeqAndText(self):
+        headerChars=set(["@","["])
         fh=self.fh
         line=fh.readline()
         if(line is None): return None
-        while(line is not None and len(line)>0 and line[0]=="@"):
+        while(line is not None and len(line)>0 and line[0] in headerChars):
             if(line[0]=="@"): self.headerLines.append(line)
             line=fh.readline()
         if(line is None or len(line)==0): return None
