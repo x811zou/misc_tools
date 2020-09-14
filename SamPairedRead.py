@@ -35,6 +35,13 @@ class SamPairedRead:
         L2=self.read2.getCigar().totalAlignmentLength()
         return L1+L2
 
+    def countIndelBases(self):
+        cigar1=self.read1.getCigar()
+        cigar2=self.read2.getCigar()
+        N1=cigar1.countIndelBases()
+        N2=cigar2.countIndelBases()
+        return N1+N2
+
     def numMismatches(self):
         mis1=self.read1.countMismatches()
         mis2=self.read2.countMismatches()
@@ -46,6 +53,14 @@ class SamPairedRead:
         score=float(L-mis)/float(L)
         return score
 
+    def computeScore(self):
+        mismatches=self.numMismatches()
+        matches=self.totalAlignedLength()-mismatches
+        numerator=matches
+        indelBases=self.countIndelBases()
+        denominator=1+mismatches+indelBases
+        score=float(numerator)/float(denominator)
+        return score
 
 
 

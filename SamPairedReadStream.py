@@ -14,10 +14,12 @@ from SamPairedRead import SamPairedRead
 # Attributes:
 #   reader : SamReader
 #   dedup : boolean
-#   buffer : SamRecord
+#   bufferedRec : SamRecord
+#   bufferedPair : SamPairedRead
 # Instance Methods:
 #   stream=SamPairedReadStream(filename,dedup=True)
 #   pair=stream.nextPair() # returns SamPairedRead
+#   readGroup=stream.nextGroup() # returns array of SamPairedRead
 # Class Methods:
 #   none
 #=========================================================================
@@ -26,14 +28,37 @@ class SamPairedReadStream:
     def __init__(self,filename,dedup=True):
         self.reader=SamReader(filename)
         self.dedup=dedup
-        self.buffer=None
+        self.bufferedRec=None
+        self.bufferedPair=None
+
+    def nextGroup(self):
+        group=[]
+        readID=None
+        while(True):
+            pair=None
+            if(self.bufferedPair is not None):
+                pair=self.bufferedPair
+                self.bufferedPair=None
+            else: pair=self.nextPair()
+            if(pair is None): return None
+            if(readID is None):
+                group.append(pair)
+                readID=pair.getID()
+                continue
+            thisID=pair.getID()
+            if(thisID==readID):
+                group.append(pair)
+                continue
+            self.bufferedPair=pair
+            break
+        return group
 
     def nextPair(self):
         while(True):
             rec=None
-            if(self.buffer is not None): 
-                rec=self.buffer
-                self.buffer=None
+            if(self.bufferedRec is not None): 
+                rec=self.bufferedRec
+                self.bufferedRec=None
             else: rec=self.reader.nextSequence()
             if(rec is None): return None
             if(rec.flag_unmapped()): continue
@@ -45,7 +70,7 @@ class SamPairedReadStream:
             if(rec.flag_unmapped()): continue
             if(self.dedup and rec.flag_PCRduplicate()): continue
             if(rec.flag_firstOfPair()): 
-                self.buffer=rec
+                self.bufferedRec=rec
                 continue
             read2=rec
             return SamPairedRead(read1,read2)

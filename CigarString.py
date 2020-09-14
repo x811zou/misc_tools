@@ -28,11 +28,15 @@ from Interval import Interval
 #   (numMatches,numMismatches)=cigar.longestMatchStats(seq1,seq2) 
 #       # ^ Returns none if no match; must call computeIntervals() first!
 #   L=cigar.totalAlignmentLength()
+#   cigar.setOps(ops)
 #=========================================================================
 class CigarString:
     """CigarString parses CIGAR strings (alignments)"""
     def __init__(self,cigar):
         self.ops=self.parse(cigar)
+
+    def setOps(self,ops):
+        self.ops=ops
 
     def matchesByLength(self):
         matches=[]
@@ -40,6 +44,13 @@ class CigarString:
             if(op.getOp() in ("M","=","X")): matches.append(op)
         matches.sort(key=lambda x: -x.getLength())
         return matches
+
+    def countIndelBases(self):
+        N=0
+        for op in self.ops:
+            c=op.getOp()
+            if(c=="I" or c=="D"): N+=1
+        return N
 
     def totalAlignmentLength(self):
         L=0
