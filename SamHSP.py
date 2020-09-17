@@ -18,7 +18,8 @@ from Strand import Strand
 #   strand : Strand
 #   readInterval : Interval
 #   refInterval : Interval
-#   score : float
+#   score : float = #matches/(1+#mismatches+#indelbases)
+#   percentIdentity : float = #matches/(#matches+#mismatches+#indelbases)
 #   rec : the SamRecord this HSP came from
 # Instance Methods:
 #   hsp=SamHSP(rec,cigar) # rec is a SamRecord
@@ -32,6 +33,7 @@ from Strand import Strand
 #   interval=hsp.getRefInterval() # returns Interval object
 #   hsp.computeScore()
 #   score=hsp.getScore()
+#   identity=hsp.getPercentIdentity()
 #   str=hsp.toString()
 #   rec=hsp.getRec() # returns the SamRecord this HSP came from
 # Private Methods:
@@ -47,6 +49,7 @@ class SamHSP:
         self.rec=rec
         self.computeIntervals()
         self.score=None
+        self.percentIdentity=None
         self.strand=Strand.REVERSE if rec.flag_revComp() else Strand.FORWARD
 
     def getRec(self):
@@ -63,7 +66,18 @@ class SamHSP:
             self.refInterval.toString()+"|"+\
             self.readInterval.toString()+"|"+\
             self.cigar.toString()+"|"+\
+            str(round(self.getPercentIdentity(),3))+"|"+\
             str(self.score)
+
+    def getPercentIdentity(self):
+        if(self.percentIdentity is None):
+            mismatches=self.rec.countMismatches()
+            matches=self.cigar.totalAlignmentLength()-mismatches
+            indelBases=self.cigar.countIndelBases()
+            numerator=matches
+            denominator=matches+mismatches+indelBases
+            self.percentIdentity=float(numerator)/float(denominator)
+        return self.percentIdentity
 
     def getScore(self):
         return self.score
