@@ -25,6 +25,7 @@ from SamMDtagParser import SamMDtagParser
 #   ID=rec.getID()
 #   cigar=rec.getCigar() # returns CigarString object
 #   seq=rec.getSequence()
+#   L=rec.seqLength()
 #   refName=rec.getRefName()
 #   refPos=rec.getRefPos()
 #   tags=rec.getTags()
@@ -55,6 +56,9 @@ class SamRecord:
         self.seq=seq
         self.flags=flags
         self.tags=tags
+
+    def seqLength(self):
+        return len(self.seq)
 
     def getTags(self):
         return self.tags

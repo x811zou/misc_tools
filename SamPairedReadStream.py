@@ -9,6 +9,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from SamReader import SamReader
 from SamPairedRead import SamPairedRead
+from SamPairedReadGroup import SamPairedReadGroup
 
 #=========================================================================
 # Attributes:
@@ -32,7 +33,7 @@ class SamPairedReadStream:
         self.bufferedPair=None
 
     def nextGroup(self):
-        group=[]
+        group=SamPairedReadGroup()
         readID=None
         while(True):
             pair=None
@@ -42,12 +43,12 @@ class SamPairedReadStream:
             else: pair=self.nextPair()
             if(pair is None): return None
             if(readID is None):
-                group.append(pair)
+                group.addPair(pair)
                 readID=pair.getID()
                 continue
             thisID=pair.getID()
             if(thisID==readID):
-                group.append(pair)
+                group.addPair(pair)
                 continue
             self.bufferedPair=pair
             break

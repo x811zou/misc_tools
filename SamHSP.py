@@ -9,11 +9,13 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from CigarString import CigarString
 from Interval import Interval
+from Strand import Strand
 
 #=========================================================================
 # Attributes:
 #   cigar : CigarString
 #   refName : string
+#   strand : Strand
 #   readInterval : Interval
 #   refInterval : Interval
 #   score : float
@@ -22,6 +24,8 @@ from Interval import Interval
 #   hsp=SamHSP(rec,cigar) # rec is a SamRecord
 #   cigar=hsp.getCigar() # returns CigarString object
 #   refName=hsp.getRefName()
+#   Strand hsp.getStrand()
+#   boolean hsp.forwardStrand()
 #   boolean=hsp.overlapsOnRead(otherHSP)
 #   boolean=hsp.overlapsOnRef(otherHSP)
 #   interval=hsp.getReadInterval()  # returns Interval object
@@ -29,6 +33,7 @@ from Interval import Interval
 #   hsp.computeScore()
 #   score=hsp.getScore()
 #   str=hsp.toString()
+#   rec=hsp.getRec() # returns the SamRecord this HSP came from
 # Private Methods:
 #   self.computeIntervals()
 # Class Methods:
@@ -42,10 +47,23 @@ class SamHSP:
         self.rec=rec
         self.computeIntervals()
         self.score=None
+        self.strand=Strand.REVERSE if rec.flag_revComp() else Strand.FORWARD
+
+    def getRec(self):
+        return self.rec
+
+    def getStrand(self):
+        return self.strand
+
+    def forwardStrand(self):
+        return self.strand==Strand.FORWARD
 
     def toString(self):
-        return self.refName+"|"+self.cigar.toString()+"|"+\
-            self.readInterval.toString()+"|"+str(self.score)
+        return self.refName+"|"+Strand.toString(self.strand)+"|"+\
+            self.refInterval.toString()+"|"+\
+            self.readInterval.toString()+"|"+\
+            self.cigar.toString()+"|"+\
+            str(self.score)
 
     def getScore(self):
         return self.score
@@ -56,7 +74,7 @@ class SamHSP:
         indelBases=self.cigar.countIndelBases()
         numerator=matches
         denominator=1+mismatches+indelBases
-        self.score=float(numerator)/float(denominator)
+        self.score=round(float(numerator)/float(denominator),2)
 
     def overlapsOnRead(self,other):
         return self.readInterval.overlaps(other.readInterval)

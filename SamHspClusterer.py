@@ -16,7 +16,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
 #   none
 # Instance Methods:
 #   clusterer=SamHspClusterer()
-# Class Methods:
+# Cla Methods:
 #   clustered=SamHspClusterer.cluster(HSPs)
 #=========================================================================
 class SamHspClusterer:
