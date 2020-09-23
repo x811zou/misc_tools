@@ -22,6 +22,7 @@ from Interval import Interval
 #   refName=anno.firstRef() # returns reference name of first HSP
 #   refNames=anno.getRefNames() # returns all reference names as a set
 #   n=anno.numDifferentRefs() # returns number of different refs among HSPs
+#   boolean=anno.anyRefsOverlap()
 #   array=anno.getReadGaps(includeMargins=True)
 #   array=anno.getReadGapLengths(includeMargins=True)
 #   array=anno.getRefGaps()
@@ -79,12 +80,21 @@ class SamAnnotation:
         HSPs=self.HSPs
         numHSPs=len(HSPs)
         if(numHSPs==0): return []
-        intervals=[]
+        gaps=[]
         for i in range(numHSPs-1):
             b=HSPs[i].getRefInterval().getEnd()
             e=HSPs[i+1].getRefInterval().getBegin()
-            if(b<e): intervals.append(Interval(b,e))
-        return intervals
+            if(b<e): gaps.append(Interval(b,e))
+        return gaps
+
+    def anyRefsOverlap(self):
+        HSPs=self.HSPs
+        numHSPs=len(HSPs)
+        for i in range(numHSPs-1):
+            for j in range(i+1,numHSPs):
+                if(HSPs[i].overlapsOnRef(HSPs[j])):
+                    return True
+        return False
 
     def getReadGapLengths(self,includeMargins=False):
         intervals=self.getReadGaps(includeMargins)

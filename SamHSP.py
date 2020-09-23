@@ -26,6 +26,7 @@ from Strand import Strand
 #   cigar=hsp.getCigar() # returns CigarString object
 #   refName=hsp.getRefName()
 #   Strand hsp.getStrand()
+#   seq=hsp.getSeq()
 #   boolean hsp.forwardStrand()
 #   boolean=hsp.overlapsOnRead(otherHSP)
 #   boolean=hsp.overlapsOnRef(otherHSP)
@@ -52,6 +53,10 @@ class SamHSP:
         self.percentIdentity=None
         self.strand=Strand.REVERSE if rec.flag_revComp() else Strand.FORWARD
 
+    def getSeq(self):
+        return self.rec.getSequence()[self.readInterval.getBegin():
+                                          self.readInterval.getEnd()]
+
     def getRec(self):
         return self.rec
 
@@ -67,7 +72,7 @@ class SamHSP:
             self.readInterval.toString()+"|"+\
             self.cigar.toString()+"|"+\
             str(round(self.getPercentIdentity(),3))+"|"+\
-            str(self.score)
+            self.getSeq()
 
     def getPercentIdentity(self):
         if(self.percentIdentity is None):
