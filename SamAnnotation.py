@@ -29,6 +29,7 @@ from Interval import Interval
 #   array=anno.getRefGapLengths()
 #   L=anno.getReadLength() # returns length of entire read (not just HSP)
 #   identity=anno.lowestPercentIdentity()
+#   x=anno.getLowestAlignability()
 # Class Methods:
 #   none
 #=========================================================================
@@ -41,6 +42,9 @@ class SamAnnotation:
 
     def lowestPercentIdentity(self):
         return min([x.getPercentIdentity() for x in self.HSPs])
+
+    def getLowestAlignability(self):
+        return min([x.getAlignability() for x in self.HSPs])
 
     def allSameStrand(self):
         HSPs=self.HSPs

@@ -20,6 +20,7 @@ from Strand import Strand
 #   refInterval : Interval
 #   score : float = #matches/(1+#mismatches+#indelbases)
 #   percentIdentity : float = #matches/(#matches+#mismatches+#indelbases)
+#   alignability : float (from ENCODE alignability map)
 #   rec : the SamRecord this HSP came from
 # Instance Methods:
 #   hsp=SamHSP(rec,cigar) # rec is a SamRecord
@@ -35,6 +36,8 @@ from Strand import Strand
 #   hsp.computeScore()
 #   score=hsp.getScore()
 #   identity=hsp.getPercentIdentity()
+#   hsp.setAlignability(x)
+#   x=hsp.getAlignability()
 #   str=hsp.toString()
 #   rec=hsp.getRec() # returns the SamRecord this HSP came from
 # Private Methods:
@@ -52,6 +55,13 @@ class SamHSP:
         self.score=None
         self.percentIdentity=None
         self.strand=Strand.REVERSE if rec.flag_revComp() else Strand.FORWARD
+        self.alignability=None
+
+    def setAlignability(self,x):
+        self.alignability=x
+
+    def getAlignability(self):
+        return self.alignability
 
     def getSeq(self):
         return self.rec.getSequence()[self.readInterval.getBegin():
