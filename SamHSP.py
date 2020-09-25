@@ -40,6 +40,7 @@ from Strand import Strand
 #   x=hsp.getAlignability()
 #   str=hsp.toString()
 #   rec=hsp.getRec() # returns the SamRecord this HSP came from
+#   ID=hsp.getReadID()
 # Private Methods:
 #   self.computeIntervals()
 # Class Methods:
@@ -56,6 +57,9 @@ class SamHSP:
         self.percentIdentity=None
         self.strand=Strand.REVERSE if rec.flag_revComp() else Strand.FORWARD
         self.alignability=None
+
+    def getReadID(self):
+        return self.rec.getID()
 
     def setAlignability(self,x):
         self.alignability=x

@@ -15,6 +15,7 @@ from Interval import Interval
 #   HSPs : array of SamHSP
 # Instance Methods:
 #   anno=SamAnnotation(HSPs) # makes shallow copy of array elements
+#   ID=anno.getReadID()
 #   n=anno.numHSPs()
 #   HSPs=anno.getHSPs()
 #   boolean=anno.allRefsSame() # are all references the same?
@@ -39,6 +40,12 @@ class SamAnnotation:
         self.HSPs=[]
         for hsp in HSPs:
             self.HSPs.append(hsp)
+
+    def getReadID(self):
+        HSPs=self.HSPs
+        if(len(HSPs)==0): 
+            raise Exception("No HSPs in SamAnnotation::getReadID()")
+        return HSPs[0].getReadID()
 
     def lowestPercentIdentity(self):
         return min([x.getPercentIdentity() for x in self.HSPs])
