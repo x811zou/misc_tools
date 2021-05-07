@@ -82,10 +82,10 @@ class SamRecord:
             if(rex.find("^(\d+)(.*)",md)):
                 fields.append(rex[1])
                 md=rex[2]
-            elif(rex.find("^([ACGT])(.*)",md)):
+            elif(rex.find("^([ACGTN])(.*)",md)):
                 fields.append(rex[1])
                 md=rex[2]
-            elif(rex.find("^(\^[ACGT]+)(.*)",md)):
+            elif(rex.find("^(\^[ACGTN]+)(.*)",md)):
                 fields.append(rex[1])
                 md=rex[2]
             else:

@@ -25,12 +25,30 @@ import sys
 #   row.append(value)
 #   row.print(handle)
 #   newRow=row.clone()
+#   row.log()
+#   row.log2()
+#   row.log10()
 #=========================================================================
 
 class DataFrameRow:
    def __init__(self):
       self.label=""
       self.values=[]
+
+   def log(self):
+      values=self.values
+      for i in range(len(values)):
+         values[i]=log(values[i])
+
+   def log2(self):
+      values=self.values
+      for i in range(len(values)):
+         values[i]=log2(values[i])
+
+   def log10(self):
+      values=self.values
+      for i in range(len(values)):
+         values[i]=log10(values[i])
 
    def getRaw(self):
       return self.values

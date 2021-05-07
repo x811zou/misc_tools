@@ -18,6 +18,8 @@ import math
 #    sum=SummaryStats.sum(array)
 #    r=SummaryStats.correlation(array1,array2)
 #    m=SummaryStats.median(array)
+#    array=SummaryStats.getQuantiles(values,numQuantiles)
+#    (mean,SD,Min,Max)=SummaryStats.trimmedStats(array,percent)
 ######################################################################
 
 class SummaryStats:
@@ -35,6 +37,32 @@ class SummaryStats:
         halfN=int(n/2)
         if(n%2==1): return a[halfN]
         return (a[halfN-1]+a[halfN])/2
+
+    @classmethod
+    def getQuantiles(self,values,numQuantiles):
+        a=[]
+        for x in values: a.append(x)
+        a.sort()
+        n=len(a)
+        q=[0]
+        index=0
+        for i in range(1,numQuantiles):
+            index=int(float(i)/float(numQuantiles)*float(n))
+            q.append(a[index])
+        q.append(a[n-1])
+        return q
+
+    @classmethod
+    def trimmedStats(self,array,percent):
+        sorted=[x for x in array]
+        sorted.sort()
+        n=len(array)
+        keep=percent*n
+        omit=n-keep
+        first=int(omit/2)
+        keep=int(keep)
+        sorted=sorted[first:(first+keep)]
+        return SummaryStats.summaryStats(sorted)
 
     @classmethod
     def summaryStats(self,array):

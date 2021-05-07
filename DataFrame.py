@@ -9,11 +9,13 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 import sys
 from DataFrameRow import DataFrameRow
+from Rex import Rex
+rex=Rex()
 
 #=========================================================================
 # Attributes:
 #   header
-#   matrix : array of rows, each of which is an array of data values
+#   matrix : array of rows, each of which is a DataFrameRow
 #   rowHash : dictionary mapping row names to row indices
 #   colHash : dictionary mapping column names to column indices
 # Methods:
@@ -31,6 +33,7 @@ from DataFrameRow import DataFrameRow
 #   df.toFloat()
 #   df.colToFloat(colIndex)
 #   header=df.getHeader()
+#   df.removeQuotes()
 #   df.hashRowNames()
 #   df.hashColNames()
 #   row=df.getRowI(i)
@@ -69,6 +72,20 @@ class DataFrame:
 
    def getRows(self):
       return self.matrix
+
+   def removeQuotes(self):
+      for row in self.matrix:
+         raw=row.getRaw()
+         for i in range(len(raw)):
+            if(rex.find("\"\s*(\S+)\"",raw[i])):
+               raw[i]=rex[1]
+      self.unquoteHeader()
+
+   def unquoteHeader(self):
+      raw=self.header
+      for i in range(len(raw)):
+         if(rex.find("\"\s*(\S+)\"",raw[i])):
+            raw[i]=rex[1]
 
    def toDataArray(self):
       array=[]

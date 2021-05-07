@@ -9,7 +9,7 @@ from builtins import (bytes, dict, int, list, object, range, str, ascii,
    chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
 from Interval import Interval
 
-ADVANCE_QUERY=set(["M","I","S","=","X"])
+ADVANCE_QUERY=set(["M","I","S","H","=","X"])
 ADVANCE_REF=set(["M","D","N","=","X"])
 
 #=========================================================================
