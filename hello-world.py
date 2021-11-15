@@ -1,15 +1,12 @@
 #!/usr/bin/env python
-from __future__ import (absolute_import, division, print_function, 
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii, chr, 
-   hex, input, next, oct, open, pow, round, super, filter, map, zip)
-import ProgramName
-import sys
 import os
-from Interval import Interval
-from ConfigFile import ConfigFile
-from SummaryStats import SummaryStats
 import random
+import sys
+
+from . import ProgramName
+from .ConfigFile import ConfigFile
+from .Interval import Interval
+from .SummaryStats import SummaryStats
 
 # Process command line
 name=ProgramName.get();
@@ -50,7 +47,8 @@ my_generator = (letter for letter in 'abcdefg')
 #print(filename,fh)
 #os.close(fh)
 
-import TempFilename
+from . import TempFilename
+
 filename=TempFilename.generate()
 fh=open(filename,'w')
 print(fh)

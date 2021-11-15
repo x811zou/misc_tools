@@ -3,11 +3,8 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function,
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from Pipe import Pipe
+from .Pipe import Pipe
+
 
 #=========================================================================
 # Attributes:
@@ -19,7 +16,7 @@ from Pipe import Pipe
 #   P=fisher.getPvalue()
 #   (exp00,exp01,exp10,exp11)=fisher.getExpectedCounts()
 # Class Methods:
-#   
+#
 #=========================================================================
 class Fisher2x2:
     """Fisher2x2 performs Fisher's exact test for 2x2 contingency tables"""
@@ -49,6 +46,6 @@ class Fisher2x2:
         exp10=int(round(pBottom*leftSum,0))
         exp11=int(round(pBottom*rightSum,0))
         return (exp00,exp01,exp10,exp11)
-        
+
 
 

@@ -3,11 +3,8 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function,
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from Bed3Record import Bed3Record
+from .Bed3Record import Bed3Record
+
 
 #=========================================================================
 # Inherited Attributes:
@@ -23,7 +20,7 @@ from Bed3Record import Bed3Record
 #   bool=isBed6()
 #   str=toString()
 # Class Methods:
-#   
+#
 #=========================================================================
 class Bed6Record(Bed3Record):
     """Bed6Record represents a record in a BED6 file"""

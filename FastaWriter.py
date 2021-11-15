@@ -3,12 +3,9 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function,
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-import re
 import os
+import re
+
 
 #=========================================================================
 # Attributes:
@@ -29,7 +26,7 @@ class FastaWriter:
     def writeFasta(self,defline,seq,filename):
         with open(filename,"w") as fh:
             self.addToFasta(defline,seq,fh)
-        
+
     def addToFasta(self,defline,seq,fh):
         defline=defline.rstrip()
         if(not re.search("^\s*>",defline)): defline=">"+defline

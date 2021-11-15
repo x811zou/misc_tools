@@ -3,13 +3,12 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # 2018 William H. Majoros (bmajoros@allumni.duke.edu)
 #=========================================================================
-from __future__ import (absolute_import, division, print_function,
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from Rex import Rex
-rex=Rex()
 import gzip
+
+from .Rex import Rex
+
+rex=Rex()
+
 
 #=========================================================================
 # Attributes:
@@ -49,6 +48,6 @@ class FastqReader:
         qualSeq=fh.readline().rstrip()
         qual=[ord(x)-33 for x in qualSeq]
         return (ID,seq,qual,qualSeq,pair)
-        
+
 
 

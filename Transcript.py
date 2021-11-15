@@ -3,17 +3,14 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function, 
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from Exon import Exon
-from Translation import Translation
-from CodonIterator import CodonIterator
-from EssexNode import EssexNode
-from Interval import Interval
 import copy
 import re
+
+from .CodonIterator import CodonIterator
+from .EssexNode import EssexNode
+from .Exon import Exon
+from .Interval import Interval
+from .Translation import Translation
 
 ######################################################################
 # bmajoros@duke.com 10/15/2016
@@ -23,7 +20,7 @@ import re
 #   source : name of entity that predicted or curated this transcript
 #   startCodon : index into (spliced) transcript sequence of ATG,
 #                regardless of strand
-#   startCodonAbsolute : absolute coordinates of start codon, 
+#   startCodonAbsolute : absolute coordinates of start codon,
 #                        relative to genomic axis
 #   score : float
 #   strand : + or -
@@ -185,7 +182,7 @@ class Transcript:
                     end=int(exon.getIthElem(1))
                     exon=Exon(begin,end,self)
                     UTR.append(exon)
-        
+
     def equals(self,other):
         if(self.getSource()!=other.getSource()): return False
         if(self.getStrand()!=other.getStrand()): return False
@@ -562,7 +559,7 @@ class Transcript:
                 exon.type="initial-exon" if numExons>1 else "single-exon"
                 self.startCodon=0
                 break
-        
+
         # Find in-frame stop codon
         codonIterator=CodonIterator(self,axisSequenceRef,stopCodons)
         stopCodonFound=False
@@ -595,7 +592,7 @@ class Transcript:
                         self.deleteExon(j)
                         j-=1
                     stopCodonFound=True
-                    break	
+                    break
         if(not stopCodonFound):
             ### sometimes the GFF coords don't include the stop codon...
             numExons=self.numExons()
@@ -618,7 +615,7 @@ class Transcript:
                           self.transcriptId,self.strand,
                           "strand , unable to trim UTR")
         self.recomputeBoundaries()
-        
+
     def getScore(self):
         return self.score
         #exons=self.exons
@@ -640,7 +637,7 @@ class Transcript:
                     if(lastExonEnd>exon.getBegin()): exit("XXX "+str(lastExonEnd)+" "+str(exon.getBegin())+" "+strand)
                     introns.append(Interval(lastExonEnd,exon.getBegin()))
                 else:
-                    if(lastExonEnd<exon.getEnd()): 
+                    if(lastExonEnd<exon.getEnd()):
                         for exon in exons: print("ZZZ",exon.toGff())
                         exit("YYY "+str(exon.getEnd())+" "+str(lastExonEnd)+" "+strand+" "+self.toGff())
                     introns.append(Interval(exon.getEnd(),lastExonEnd))
@@ -726,9 +723,9 @@ class Transcript:
             exons=self.exons
             UTR=self.UTR
             rawExons=[]
-            for exon in exons: 
+            for exon in exons:
                 if(exon.getLength()>0): rawExons.append(exon.copy())
-            for utr in UTR: 
+            for utr in UTR:
                 if(utr.getLength()>0): rawExons.append(utr.copy())
         # Sort into chromosome order (temporarily):
         rawExons.sort(key=lambda exon: exon.begin)

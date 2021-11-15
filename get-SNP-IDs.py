@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-import sys
-import os
 import re
-import basic
+import sys
 
 name=sys.argv[0];
 if(len(sys.argv)!=2):

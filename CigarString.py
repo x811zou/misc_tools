@@ -3,14 +3,12 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # 2018 William H. Majoros (bmajoros@alumni.duke.edu)
 #=========================================================================
-from __future__ import (absolute_import, division, print_function,
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from Rex import Rex
+from .Rex import Rex
+
 rex=Rex()
-from CigarOp import CigarOp
-from Interval import Interval
+from .CigarOp import CigarOp
+from .Interval import Interval
+
 
 #=========================================================================
 # Attributes:
@@ -25,7 +23,7 @@ from Interval import Interval
 #   ops=cigar.matchesByLength() # sorted by decreasing length
 #   op=cigar.longestMatch() # returns a CigarOp object (or None)
 #   L=cigar.longestMatchLen() # returns integer
-#   (numMatches,numMismatches)=cigar.longestMatchStats(seq1,seq2) 
+#   (numMatches,numMismatches)=cigar.longestMatchStats(seq1,seq2)
 #       # ^ Returns none if no match; must call computeIntervals() first!
 #   L=cigar.totalAlignmentLength()
 #   cigar.setOps(ops)
@@ -77,7 +75,7 @@ class CigarString:
 
     def __getitem__(self,i):
         return self.ops[i]
-        
+
     def completeMatch(self):
         ops=self.ops
         return len(ops)==1 and ops[0].op in ("M","=","X")

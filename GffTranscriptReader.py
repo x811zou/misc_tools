@@ -3,18 +3,13 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function, 
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-# The above imports should allow this program to run in both Python 2 and
-# Python 3.  You might need to update your version of module "future".
-from Exon import Exon
-from Transcript import Transcript
-from Gene import Gene
-from Integer import Integer
-from Rex import Rex
 import re
+
+from .Exon import Exon
+from .Gene import Gene
+from .Integer import Integer
+from .Rex import Rex
+from .Transcript import Transcript
 
 ######################################################################
 # Returns a list of Transcripts.  For each transcript, the Exons
@@ -151,7 +146,7 @@ class GffTranscriptReader:
                 prevExon=exons[i-1]
                 intronSize=exon.begin-prevExon.end
                 totalIntronSize+=intronSize
-            if(transcript.startCodon is not None and 
+            if(transcript.startCodon is not None and
                self.exonContainsPoint(exon,transcript.startCodon)): break
         return startCodon
 
@@ -179,7 +174,7 @@ class GffTranscriptReader:
             if(transcript.startCodon is not None and
                self.exonContainsPoint(exon,transcript.startCodon)): break
         return startCodon
-        
+
     def adjustStartCodons(self,transcripts):
         for transcript in transcripts:
             transcript.sortExons()
@@ -234,7 +229,7 @@ class GffTranscriptReader:
             transcript.setGene(gene)
             gene.addTranscript(transcript)
             transcript.extraFields=transcriptExtraFields
-                           
+
     def loadGFF_UTR(self,fields,line,transcriptBeginEnd,GFF,
                            transcripts,readOrder,genes):
         exonBegin=int(fields[3])-1
@@ -253,8 +248,8 @@ class GffTranscriptReader:
         elif(rex.find('gene_id[:=]?\s*"?([^\s\;"]+)"?',line)): geneId=rex[1]
         if(transcriptId is None): transcriptId=geneId
         if(geneId is None): geneId=transcriptId
-        if(transcriptId is None): 
-            raise Exception(line+" : no transcript ID found")        
+        if(transcriptId is None):
+            raise Exception(line+" : no transcript ID found")
         if(rex.find("(\S+);$",transcriptId)): transcriptId=rex[1]
         if(rex.find("(\S+);$",geneId)): geneId=rex[1]
         extra=""
@@ -283,7 +278,7 @@ class GffTranscriptReader:
         transcript.setGene(gene)
         exon=Exon(exonBegin,exonEnd,transcript)
         exon.extraFields=extra
-        if(transcript.rawExons is not None): 
+        if(transcript.rawExons is not None):
             exon.frame=frame
             exon.score=exonScore
             exon.type=fields[2]
@@ -346,7 +341,7 @@ class GffTranscriptReader:
         if(transcript.rawExons is None): transcript.rawExons=[]
         transcript.rawExons.append(exon)
         gene.addTranscript(transcript)
-        
+
     def loadGFF_CDS(self,fields,line,transcriptBeginEnd,GFF,
                     transcripts,readOrder,genes):
         exonBegin=int(fields[3])-1
@@ -365,8 +360,8 @@ class GffTranscriptReader:
         elif(rex.find('gene_id[:=]?\s*"?([^\s\;"]+)"?',line)): geneId=rex[1]
         if(transcriptId is None): transcriptId=geneId
         if(geneId is None): geneId=transcriptId
-        if(transcriptId is None): 
-            raise Exception(line+" : no transcript ID found")        
+        if(transcriptId is None):
+            raise Exception(line+" : no transcript ID found")
         if(rex.find('(\S+);$',transcriptId)): transcriptId=rex[1]
         if(rex.find('(\S+);$',geneId)): geneId=rex[1]
         extra=""

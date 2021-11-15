@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-import sys
-import os
 import operator
+import sys
 
 if(len(sys.argv)!=2):
    print sys.argv[0]+" <in.txt>"

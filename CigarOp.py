@@ -3,12 +3,6 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # 2018 William H. Majoros (bmajoros@alumni.duke.edu)
 #=========================================================================
-from __future__ import (absolute_import, division, print_function,
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from Interval import Interval
-
 ADVANCE_QUERY=set(["M","I","S","H","=","X"])
 ADVANCE_REF=set(["M","D","N","=","X"])
 
@@ -51,7 +45,7 @@ class CigarOp:
     def getRefInterval(self):
         return self.interval2
 
-    def getOp(self): 
+    def getOp(self):
         return self.op
 
     def getLength(self):

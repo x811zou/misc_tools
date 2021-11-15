@@ -3,12 +3,8 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function, 
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from FastaWriter import FastaWriter
-from Interval import Interval
+from .FastaWriter import FastaWriter
+from .Interval import Interval
 
 ######################################################################
 #
@@ -43,7 +39,7 @@ from Interval import Interval
 #   array=track.getZeroRegions() # returns array of Interval
 #   array=track.getRegionsAbove(cutoff) # returns array of Interval
 #   bool=track.anyZeroValues() # only for continuous tracks
-#   array=track.getContiguousRegions() # returns an array of Interval with 
+#   array=track.getContiguousRegions() # returns an array of Interval with
 #      "value" attribute added
 #   newTrack=track.slice(begin,end) # [begin,end) => end not inclusive
 #   meanValue=track.getMean(interval=None) # only for continuous data
@@ -199,7 +195,7 @@ class FastbTrack:
         L=len(data)
         begin=0
         end=L
-        if(interval is not None): 
+        if(interval is not None):
             begin=interval.begin
             end=interval.end
             L=end-begin
@@ -213,7 +209,7 @@ class FastbTrack:
         L=len(data)
         begin=0
         end=L
-        if(interval is not None): 
+        if(interval is not None):
             begin=interval.begin
             end=interval.end
             L=end-begin

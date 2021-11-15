@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-import sys
-import os
-import basic
 import glob
+import os
 import re
 
 # Global variables
@@ -22,7 +20,7 @@ samFiles=glob.glob(samDir+"/*.sam")
 # Process each sam file
 jobID=1
 for samfile in samFiles:
-  match=re.search("([^/]+)\.sam",samfile); 
+  match=re.search("([^/]+)\.sam",samfile);
   bamfile=samDir+"/"+match.group(1)+".bam"
   bamStem=samDir+"/"+match.group(1)
   slurmFile=slurmDir+"/"+str(jobID)+".slurm"

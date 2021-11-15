@@ -3,13 +3,9 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # 2018 William H. Majoros (bmajoros@alumni.duke.edu)
 #=========================================================================
-from __future__ import (absolute_import, division, print_function, 
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-import sys
-from DataFrameRow import DataFrameRow
-from Rex import Rex
+from .DataFrameRow import DataFrameRow
+from .Rex import Rex
+
 rex=Rex()
 
 #=========================================================================
@@ -120,7 +116,7 @@ class DataFrame:
    def subsetRows(self,rowIndices):
       newDF=DataFrame()
       newDF.header=self.header
-      for i in rowIndices: 
+      for i in rowIndices:
          newDF.addRow(self[i].clone())
       return newDF
 

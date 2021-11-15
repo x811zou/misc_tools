@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-import sys
-import os
 import gzip
+import sys
 
 if(len(sys.argv)!=4):
    print(sys.argv[0]+" <in.vcf.gz> <begin> <end>")

@@ -3,13 +3,11 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function,
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from Bed3Record import Bed3Record
-from Bed6Record import Bed6Record
 import re
+
+from .Bed3Record import Bed3Record
+from .Bed6Record import Bed6Record
+
 
 #=========================================================================
 # Attributes:
@@ -21,7 +19,7 @@ import re
 #   list=BedReader.readAll(filename)
 #   hash=BedReader.hashBySubstrate(filename) # chr -> list of records
 # Class Methods:
-#   
+#
 #=========================================================================
 class BedReader:
     """BedReader reads bed3 and/or bed6 files"""

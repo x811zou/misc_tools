@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-import sys
-import os
-import basic
 import glob
+import os
 import re
+import sys
 
 # Global variables
 jobName="STAR"
@@ -48,7 +47,7 @@ for sample in samples:
   # Process each file
   files=glob.glob(sample+"/*.fastq.gz")
   for file in files:
-    match=re.search("([^/]+)\s*$",file); 
+    match=re.search("([^/]+)\s*$",file);
     if(match is None): sys.exit("can't parse filename")
     fileNoPath=match.group(1)
     match=re.search("(\S+_R)([12])(_\S+.fastq.gz)",fileNoPath);

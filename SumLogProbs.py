@@ -4,14 +4,7 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function, 
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-# The above imports should allow this program to run in both Python 2 and
-# Python 3.  You might need to update your version of module "future".
 import math
-
 
 NEGATIVE_INFINITY=float("-inf")
 
@@ -32,7 +25,7 @@ def sumLogProbs(x):
     n=len(x)
     if(n==1): return x[0]
     if(n==0): return NEGATIVE_INFINITY
-    
+
     # Pull out the largest value
     largestValue=x[0]
     for v in x:

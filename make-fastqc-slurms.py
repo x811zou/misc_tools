@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-import sys
-import os
-import basic
 import glob
+import os
 import re
 
 # Global variables

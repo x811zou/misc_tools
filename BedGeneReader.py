@@ -3,16 +3,13 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # Copyright (C)2016 William H. Majoros (martiandna@gmail.com).
 #=========================================================================
-from __future__ import (absolute_import, division, print_function,
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-from BedReader import BedReader
-from BedGene import BedGene
+from .BedGene import BedGene
+from .BedReader import BedReader
+
 
 #=========================================================================
 # Attributes:
-#   
+#
 # Instance Methods:
 #   reader=BedGeneReader()
 #   genes=reader.read(CDS_filename,UTR_filename=None)
@@ -68,7 +65,7 @@ class BedGeneReader:
                 raise Exception("BED file has too few fields")
             id=record.name
             gene=hash.get(id,None)
-            if(not gene): 
+            if(not gene):
                 gene=BedGene(id,record.chr,record.strand)
                 genes.append(gene)
                 hash[id]=gene

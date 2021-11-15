@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-import sys
-import os
 import distutils
-from distutils.spawn import find_executable
-import subprocess
-import basic
+import os
+import sys
 
 name=sys.argv[0];
 

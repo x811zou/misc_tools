@@ -3,11 +3,6 @@
 # License (GPL) version 3, as described at www.opensource.org.
 # 2018 William H. Majoros (bmajoros@alumni.duke.edu)
 #=========================================================================
-from __future__ import (absolute_import, division, print_function, 
-   unicode_literals, generators, nested_scopes, with_statement)
-from builtins import (bytes, dict, int, list, object, range, str, ascii,
-   chr, hex, input, next, oct, open, pow, round, super, filter, map, zip)
-import sys
 
 #=========================================================================
 # Attributes:
@@ -81,7 +76,7 @@ class DataFrameRow:
 
    def rename(self,x):
       self.label=x
-      
+
    def toInt(self):
       self.values=[int(x) for x in self.values]
 
